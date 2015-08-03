@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Pivotal Software, Inc.
+Implementation-Title: MenuForYou
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: org.menuforyou
+Build-Jdk: 1.7.0_15
+Built-By: mauriziopinzi
+Created-By: Maven Integration for Eclipse
+
