@@ -17,8 +17,7 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
-public abstract class EntityWithLanguage implements Serializable,
-		EntityLanguageble {
+public abstract class EntityWithLanguage implements Serializable, EntityLanguageble {
 
 	private static final long serialVersionUID = 1L;
 
@@ -82,17 +81,17 @@ public abstract class EntityWithLanguage implements Serializable,
 		this.sequenceNumber = order;
 	}
 
-	private Restaurant restaurant;
+	private Menu menu;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "RESTAURANT_ID")
+	@JoinColumn(name = "MENU_ID")
 	@JsonIgnore
-	public Restaurant getRestaurant() {
-		return restaurant;
+	public Menu getMenu() {
+		return menu;
 	}
 
-	public void setRestaurant(Restaurant restaurant) {
-		this.restaurant = restaurant;
+	public void setMenu(Menu menu) {
+		this.menu = menu;
 	}
 
 	public void mapCustomFields(EnumLanguage language) {
@@ -118,8 +117,7 @@ public abstract class EntityWithLanguage implements Serializable,
 	}
 
 	public String toString() {
-		return this.getClass().getName() + "[id:" + id + ",description:"
-				+ description + ", order:" + order;
+		return this.getClass().getName() + "[id:" + id + ",description:" + description + ", order:" + order;
 	}
 
 }

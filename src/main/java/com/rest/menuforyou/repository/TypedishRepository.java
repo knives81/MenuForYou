@@ -1,9 +1,11 @@
 package com.rest.menuforyou.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
 import com.rest.menuforyou.domain.Typedish;
 
-public interface TypedishRepository extends CrudRepository<Typedish, Long> {
+public interface TypedishRepository extends EntityWithLanguageRepo<Typedish> {
+
+	List<Typedish> findByMenuId(Long id);
 
 }

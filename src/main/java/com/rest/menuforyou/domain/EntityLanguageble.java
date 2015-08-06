@@ -9,7 +9,7 @@ public interface EntityLanguageble {
 
 	public abstract Set<? extends Language> getEntitiesLang();
 
-	public abstract void setRestaurant(Restaurant restaurant);
+	public abstract void setMenu(Menu menu);
 
 	public abstract void setUsername(String username);
 

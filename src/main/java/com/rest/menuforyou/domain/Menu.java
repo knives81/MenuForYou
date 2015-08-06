@@ -23,4 +23,15 @@ public class Menu {
 		this.id = id;
 	}
 
+	private String name;
+
+	@Column(name = "MENU_NAME")
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

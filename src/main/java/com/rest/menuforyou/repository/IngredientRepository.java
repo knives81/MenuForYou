@@ -1,9 +1,11 @@
 package com.rest.menuforyou.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
 import com.rest.menuforyou.domain.Ingredient;
 
-public interface IngredientRepository extends CrudRepository<Ingredient, Long> {
+public interface IngredientRepository extends EntityWithLanguageRepo<Ingredient> {
+
+	List<Ingredient> findByMenuId(Long id);
 
 }

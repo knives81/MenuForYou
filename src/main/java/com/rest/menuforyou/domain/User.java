@@ -66,4 +66,5 @@ public class User implements Serializable {
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
+
 }

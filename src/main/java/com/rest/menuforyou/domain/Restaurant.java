@@ -19,12 +19,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class Restaurant implements Serializable {
 
 	private static final long serialVersionUID = 8326573469891220946L;
+
 	private Long id;
-	private String name;
-	private String address;
-	private String imageUrl;
-	private String username;
-	private User user;
 
 	@Id
 	@Column(name = "RESTAURANT_ID")
@@ -37,6 +33,8 @@ public class Restaurant implements Serializable {
 		this.id = id;
 	}
 
+	private String name;
+
 	@Column(name = "RESTAURANT_NAME")
 	public String getName() {
 		return name;
@@ -45,6 +43,8 @@ public class Restaurant implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	private String address;
 
 	@Column(name = "RESTAURANT_ADDRESS")
 	public String getAddress() {
@@ -55,6 +55,8 @@ public class Restaurant implements Serializable {
 		this.address = address;
 	}
 
+	private String imageUrl;
+
 	@Column(name = "RESTAURANT_IMAGE_URL")
 	public String getImageUrl() {
 		return imageUrl;
@@ -63,6 +65,8 @@ public class Restaurant implements Serializable {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
+
+	private String username;
 
 	@Column(name = "RESTAURANT_USER")
 	@JsonIgnore
@@ -74,6 +78,8 @@ public class Restaurant implements Serializable {
 		this.username = username;
 	}
 
+	private User user;
+
 	@JsonView(Views.ViewWithUser.class)
 	@OneToOne
 	@JoinColumn(name = "RESTAURANT_USER_ID")
@@ -83,6 +89,18 @@ public class Restaurant implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	private Menu menu;
+
+	@OneToOne
+	@JoinColumn(name = "RESTAURANT_MENU_ID")
+	public Menu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(Menu menu) {
+		this.menu = menu;
 	}
 
 }
