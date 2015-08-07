@@ -1,5 +1,7 @@
 package com.rest.menuforyou.web;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -46,12 +48,9 @@ public class TypedishController {
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.GET)
 	public @ResponseBody String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) throws JsonProcessingException {
 		try {
-			return null;
-			// List<Typedish> typedishes = (List<Typedish>) typedishService
-			// .listEntities(id, language, Typedish.class);
-			// ObjectWriter objectWriter = objectMapper
-			// .writerWithView(Views.ViewFromTypedish.class);
-			// return objectWriter.writeValueAsString(typedishes);
+			List<Typedish> typedishes = (List<Typedish>) typedishService.listEntities(id, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
+			return objectWriter.writeValueAsString(typedishes);
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			throw new GenericException(Error.UNKNOWN, e.getMessage());

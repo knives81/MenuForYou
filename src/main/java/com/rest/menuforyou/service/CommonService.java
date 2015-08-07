@@ -39,6 +39,7 @@ public abstract class CommonService {
 
 	@Transactional(readOnly = false)
 	public Long saveEntity(long idMenu, EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
+		initialize();
 		String descriptionToSave = entityToSave.getDescription();
 		Long idEntity = entityToSave.getId();
 		Language<?> languageToSave = null;
@@ -66,7 +67,7 @@ public abstract class CommonService {
 		} else {
 			Menu menu = menuRepo.findOne(idMenu);
 			entityToSave.setMenu(menu);
-			entityToSave.setUsername(getUsernameLogged());
+			entityToSave.setUsername("maurizio01");
 			languageToSave = makeLanguageEntity(enumLanguage, descriptionToSave, entityToSave);
 			SequenceNumber sq = new SequenceNumber();
 			sequenceNumberRepo.save(sq);

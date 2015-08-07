@@ -16,7 +16,6 @@ import com.rest.menuforyou.error.GenericException;
 import com.rest.menuforyou.repository.MenuRepository;
 import com.rest.menuforyou.repository.RestaurantRepository;
 import com.rest.menuforyou.repository.UserRepository;
-import come.rest.menuforyou.util.Utils;
 
 @Service
 public class RestaurantService {
@@ -37,12 +36,14 @@ public class RestaurantService {
 	public Long saveRestaurant(Restaurant restaurant) {
 		try {
 
-			String username = Utils.getUsernameLogged();
+			String username = "maurizio01";
+			// String username = Utils.getUsernameLogged();
 			if (StringUtils.isEmpty(username)) {
 				User user = restaurant.getUser();
 				userRepo.save(user);
 				Menu menu = restaurant.getMenu();
 				menuRepo.save(menu);
+				restaurant.setUsername(user.getUsername());
 				restaurantRepo.save(restaurant);
 			} else {
 				User user = userRepo.findByUsername(username);

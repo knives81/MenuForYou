@@ -2,14 +2,12 @@ package com.rest.menuforyou.domain;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,16 +31,16 @@ public class Typedish extends EntityWithLanguage implements Serializable {
 		this.entitiesLang = entitiesLang;
 	}
 
-	private List<Dish> dishes;
+	private Set<Dish> dishes;
 
 	@JsonView(Views.ViewFromTypedish.class)
 	@OneToMany(mappedBy = "typedish", fetch = FetchType.EAGER)
-	@OrderBy("sequenceNumber")
-	public List<Dish> getDishes() {
+	// @OrderBy("sequenceNumber")
+	public Set<Dish> getDishes() {
 		return dishes;
 	}
 
-	public void setDishes(List<Dish> dishes) {
+	public void setDishes(Set<Dish> dishes) {
 		this.dishes = dishes;
 	}
 }
