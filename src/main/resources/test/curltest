@@ -24,5 +24,8 @@ curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menufo
 curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/dishes?language=EN -d '{"id":"1","name":"Gnocco Modified","description":"Gnocco Language Modified","typedish":{"id":2},"ingredients":[{"id":"3"},{"id":"4"}]}'
 
 curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante02","address":"via del corso","user":{"username":"maurizio03","password":"password","enabled":"true"},"menu":{"name":"menu02"}}'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante03 menu 01”,”address":"via del bosco”}'
+curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante03 menu 01","address":"via del bosco"}'
+
+curl -i -X POST -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadRestaurantImage?id=1
+curl -i -X POST -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadDishImage?id=1
 

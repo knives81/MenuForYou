@@ -1,4 +1,4 @@
-package com.menuforyou.app;
+package com.rest.menuforyou.app;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
