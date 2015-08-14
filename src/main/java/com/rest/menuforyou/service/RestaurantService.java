@@ -2,9 +2,11 @@ package com.rest.menuforyou.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,25 +35,38 @@ public class RestaurantService {
 	private MenuRepository menuRepo;
 
 	@Transactional(readOnly = false)
-	public Long saveRestaurant(Restaurant restaurant) {
+	public Long createRestaurant(Restaurant restaurant) {
 		try {
+			User user = restaurant.getUser();
 
-			String username = "maurizio01";
-			// String username = Utils.getUsernameLogged();
-			if (StringUtils.isEmpty(username)) {
-				User user = restaurant.getUser();
-				userRepo.save(user);
-				Menu menu = restaurant.getMenu();
-				menuRepo.save(menu);
-				restaurant.setUsername(user.getUsername());
-				restaurantRepo.save(restaurant);
-			} else {
-				User user = userRepo.findByUsername(username);
-				List<Restaurant> restaurants = restaurantRepo.findByUser(user);
-				restaurant.setUser(user);
-				restaurant.setMenu(restaurants.get(0).getMenu());
-				restaurantRepo.save(restaurant);
-			}
+			user.setAuthority("ADMIN");
+
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String hashedPassword = passwordEncoder.encode(user.getPassword());
+			user.setPassword(hashedPassword);
+
+			userRepo.save(user);
+			Menu menu = restaurant.getMenu();
+			menuRepo.save(menu);
+			restaurantRepo.save(restaurant);
+
+		} catch (ConstraintViolationException e) {
+			System.err.println(e.getMessage());
+			throw new GenericException(Error.SQL, e.getMessage());
+		}
+		return restaurant.getId();
+
+	}
+
+	@Transactional(readOnly = false)
+	public Long addRestaurant(Restaurant restaurant) {
+		try {
+			String username = getUsernameLogged();
+			User user = userRepo.findByUsername(username);
+			List<Restaurant> restaurants = restaurantRepo.findByUser(user);
+			restaurant.setUser(user);
+			restaurant.setMenu(restaurants.get(0).getMenu());
+			restaurantRepo.save(restaurant);
 
 		} catch (ConstraintViolationException e) {
 			System.err.println(e.getMessage());
@@ -72,6 +87,15 @@ public class RestaurantService {
 	public Restaurant getRestaurant(long idRestaurant) {
 		Restaurant restaurant = restaurantRepo.findOne(Long.valueOf(idRestaurant));
 		return restaurant;
+	}
+
+	private static String getUsernameLogged() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null) {
+			System.err.println("Problem with authentication");
+			return "maurizio01";
+		}
+		return auth.getName();
 	}
 
 }

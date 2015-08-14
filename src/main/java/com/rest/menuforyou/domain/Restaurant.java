@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
@@ -66,23 +65,11 @@ public class Restaurant implements Serializable {
 		this.imageUrl = imageUrl;
 	}
 
-	private String username;
-
-	@Column(name = "RESTAURANT_USER")
-	@JsonIgnore
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	private User user;
 
 	@JsonView(Views.ViewWithUser.class)
 	@OneToOne
-	@JoinColumn(name = "RESTAURANT_USER_ID")
+	@JoinColumn(name = "RESTAURANT_USER")
 	public User getUser() {
 		return user;
 	}

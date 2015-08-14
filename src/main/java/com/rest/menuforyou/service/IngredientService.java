@@ -44,7 +44,8 @@ public class IngredientService extends CommonService {
 	}
 
 	@Override
-	public void mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+	public boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+		return false;
 	}
 
 	@Override

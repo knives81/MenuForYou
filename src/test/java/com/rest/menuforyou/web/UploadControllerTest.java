@@ -3,12 +3,12 @@ package com.rest.menuforyou.web;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.FileInputStream;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -30,11 +30,12 @@ public class UploadControllerTest extends BaseTest {
 	@Test
 	public void testUpload() throws Exception {
 
-		FileInputStream fis = new FileInputStream("/Users/mauriziopinzi/Desktop/foto.jpg");
-		MockMultipartFile multipartFile = new MockMultipartFile("file", fis);
+		Resource picture = new ClassPathResource("/img/foto.JPG");
+		MockMultipartFile multipartFile = new MockMultipartFile("file", picture.getInputStream());
 
-		mockMvc.perform(fileUpload("/uploadDishImage?id=1").file(multipartFile))
-				.andExpect(status().isOk());
+		mockMvc.perform(fileUpload("/uploadDishImage?id=1").
+				file(multipartFile)).
+				andExpect(status().isOk());
 	}
 
 }

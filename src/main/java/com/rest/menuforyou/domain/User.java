@@ -4,34 +4,22 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @Table(name = "TB_USER")
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 8326573469891220946L;
-	private Long userId;
+
 	private String username;
-	private String password;
-	private String authority;
-	private Boolean enabled;
 
 	@Id
-	@Column(name = "USER_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
 	@Column(name = "USERNAME", unique = true)
+	@NotEmpty
 	public String getUsername() {
 		return username;
 	}
@@ -40,7 +28,10 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
+	private String password;
+
 	@Column(name = "PASSWORD")
+	@NotEmpty
 	public String getPassword() {
 		return password;
 	}
@@ -48,6 +39,8 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	private String authority;
 
 	@Column(name = "AUTHORITY")
 	public String getAuthority() {
@@ -57,6 +50,8 @@ public class User implements Serializable {
 	public void setAuthority(String authority) {
 		this.authority = authority;
 	}
+
+	private Boolean enabled;
 
 	@Column(name = "ENABLED")
 	public Boolean getEnabled() {

@@ -1,10 +1,14 @@
 package com.rest.menuforyou.web;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Typedish;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -55,27 +60,41 @@ public class TypedishControllerTest extends BaseTest {
 
 	@Test
 	public void testCreateTypedishes() throws Exception {
-		Typedish typedish = new Typedish();
-		typedish.setDescription("PizzaWrong");
 
-		String typedishJson = json(typedish);
+		List<Typedish> typedishes = Arrays.asList(
+				TypedishBuilder.typedish().
+						withDesc("PizzaWrong").
+						build());
+
+		String typedishesJson = json(typedishes);
 		this.mockMvc.perform(post("/menus/1/typedishes/?language=IT")
 				.contentType(contentType)
-				.content(typedishJson))
+				.content(typedishesJson))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void testUpdateTypedishes() throws Exception {
-		Typedish typedish = new Typedish();
-		typedish.setId(Long.valueOf(3));
-		typedish.setDescription("Appetizer EN Modified");
 
-		String typedishJson = json(typedish);
+		List<Typedish> typedishes = Arrays.asList(
+				TypedishBuilder.typedish().
+						withId(3).
+						withDesc("Appetizer EN Modified").
+						build());
+
+		String typedishesJson = json(typedishes);
+
 		this.mockMvc.perform(post("/menus/1/typedishes/?language=IT")
 				.contentType(contentType)
-				.content(typedishJson))
+				.content(typedishesJson))
 				.andExpect(status().isCreated());
+	}
+
+	@Test
+	public void testDeleteTypedish() throws Exception {
+
+		mockMvc.perform(delete("/typedishes/3")).
+				andExpect(status().isOk());
 	}
 
 }

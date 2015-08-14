@@ -47,8 +47,8 @@ public class TypedishService extends CommonService {
 	}
 
 	@Override
-	void mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
-		// nothing to merge
+	boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+		return false;
 
 	}
 

@@ -1,28 +1,56 @@
 package com.rest.menuforyou.service;
 
-import org.hibernate.exception.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import com.rest.menuforyou.domain.User;
-import com.rest.menuforyou.error.Error;
-import com.rest.menuforyou.error.GenericException;
 import com.rest.menuforyou.repository.UserRepository;
 
-@Service
-public class UserService {
+@Component
+public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepository userRepo;
 
-	@Transactional(readOnly = false)
-	public void saveUser(User user) {
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-		try {
-			userRepo.save(user);
-		} catch (ConstraintViolationException e) {
-			System.err.println(e.getMessage() + " " + e.getErrorCode() + " " + e.getSQLState());
-			throw new GenericException(Error.SQL, e.getMessage());
+		User user = userRepo.findByUsername(username);
+
+		if (user == null) {
+			throw new UsernameNotFoundException(String.format("User with the username %s doesn't exist", username));
 		}
+
+		// Create a granted authority based on user's role.
+		// Can't pass null authorities to user. Hence initialize with an empty
+		// arraylist
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		if (user.getAuthority().equals("ADMIN")) {
+			authorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN");
+		}
+
+		// Create a UserDetails object from the data
+		UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
+
+		return userDetails;
 	}
+
+	// @Transactional(readOnly = false)
+	// public void saveUser(User user) {
+	//
+	// try {
+	// userRepo.save(user);
+	// } catch (ConstraintViolationException e) {
+	// System.err.println(e.getMessage() + " " + e.getErrorCode() + " " +
+	// e.getSQLState());
+	// throw new GenericException(Error.SQL, e.getMessage());
+	// }
+	// }
 }

@@ -1,10 +1,14 @@
 package com.rest.menuforyou.web;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.IngredientBuilder;
 import com.rest.menuforyou.domain.Ingredient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -56,27 +61,41 @@ public class IngredientControllerTest extends BaseTest {
 
 	@Test
 	public void testCreateIngredient() throws Exception {
-		Ingredient ingredient = new Ingredient();
-		ingredient.setDescription("Farina");
 
-		String ingredientJson = json(ingredient);
+		List<Ingredient> ingredients = Arrays.asList(
+				IngredientBuilder.ingredient().
+						withDesc("Farina").
+						build());
+
+		String ingredientsJson = json(ingredients);
 		this.mockMvc.perform(post("/menus/1/ingredients/?language=IT")
 				.contentType(contentType)
-				.content(ingredientJson))
+				.content(ingredientsJson))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void testUpdateIngredient() throws Exception {
-		Ingredient ingredient = new Ingredient();
-		ingredient.setId(Long.valueOf(2));
-		ingredient.setDescription("Sugar Modified");
 
-		String ingredientJson = json(ingredient);
+		List<Ingredient> ingredients = Arrays.asList(
+				IngredientBuilder.ingredient().
+						withId(1).
+						withDesc("Sugar Modified").
+						build());
+
+		String ingredientsJson = json(ingredients);
 		this.mockMvc.perform(post("/menus/1/ingredients/?language=EN")
 				.contentType(contentType)
-				.content(ingredientJson))
+				.content(ingredientsJson))
 				.andExpect(status().isCreated());
+	}
+
+	@Test
+	public void testDeleteIngredient() throws Exception {
+
+		mockMvc.perform(delete("/ingredients/1")).
+				andExpect(status().isOk());
+
 	}
 
 }

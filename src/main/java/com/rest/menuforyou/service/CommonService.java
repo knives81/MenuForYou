@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rest.menuforyou.domain.EntityWithLanguage;
@@ -38,52 +38,103 @@ public abstract class CommonService {
 	}
 
 	@Transactional(readOnly = false)
-	public Long saveEntity(long idMenu, EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
+	public Long saveEntities(long idMenu, List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
 		initialize();
+		Long lastId = Long.valueOf(0);
+		for (EntityWithLanguage entityToSave : entitiesToSave) {
+			saveSingleEntity(idMenu, entityToSave, enumLanguage);
+			lastId = entityToSave.getId();
+
+		}
+		return lastId;
+	}
+
+	@Transactional(readOnly = false)
+	public Long updateEntities(List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
+		initialize();
+		Long lastId = Long.valueOf(0);
+		for (EntityWithLanguage entityToSave : entitiesToSave) {
+			updateExistingEntity(entityToSave, enumLanguage);
+			lastId = entityToSave.getId();
+
+		}
+		return lastId;
+	}
+
+	public void saveSingleEntity(long idMenu, EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
+		if (entityToSave.getId() != null) {
+			updateExistingEntity(entityToSave, enumLanguage);
+		} else {
+			createNewEntity(idMenu, entityToSave, enumLanguage);
+		}
+	}
+
+	public void updateExistingEntity(EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
 		String descriptionToSave = entityToSave.getDescription();
 		Long idEntity = entityToSave.getId();
 		Language<?> languageToSave = null;
-
-		if (idEntity != null) {
-			EntityWithLanguage entityDb = entityRepo.findOne(idEntity);
-			// update entity
-			mergeEntity(entityToSave, entityDb);
-
-			// update description
-			for (Language<?> languageDb : entityDb.getEntitiesLang()) {
-				if (languageDb.getLanguage().equals(enumLanguage) && StringUtils.isNotEmpty(descriptionToSave)) {
-					languageToSave = languageDb;
-					languageToSave.setDescription(descriptionToSave);
-					saveLanguageEntity(languageToSave);
-					break;
-				}
-			}
-			// new language to be added
-			if (languageToSave == null && StringUtils.isNotEmpty(descriptionToSave)) {
-				languageToSave = makeLanguageEntity(enumLanguage, descriptionToSave, entityDb);
-				saveLanguageEntity(languageToSave);
-
-			}
-		} else {
-			Menu menu = menuRepo.findOne(idMenu);
-			entityToSave.setMenu(menu);
-			entityToSave.setUsername("maurizio01");
-			languageToSave = makeLanguageEntity(enumLanguage, descriptionToSave, entityToSave);
-			SequenceNumber sq = new SequenceNumber();
-			sequenceNumberRepo.save(sq);
-			entityToSave.setSequenceNumber(sq);
-			saveEntity(entityToSave);
-			saveLanguageEntity(languageToSave);
+		EntityWithLanguage entityDb = entityRepo.findOne(idEntity);
+		// update entity
+		boolean needToBeMerged = false;
+		needToBeMerged = mergeCommonFields(entityToSave, entityDb);
+		needToBeMerged &= mergeEntity(entityToSave, entityDb);
+		if (needToBeMerged) {
+			saveEntity(entityDb);
 		}
 
-		return entityToSave.getId();
+		// update description
+		for (Language<?> languageDb : entityDb.getEntitiesLang()) {
+			if (languageDb.getLanguage().equals(enumLanguage) && StringUtils.isNotEmpty(descriptionToSave)) {
+				languageToSave = languageDb;
+				languageToSave.setDescription(descriptionToSave);
+				saveLanguageEntity(languageToSave);
+				break;
+			}
+		}
+		// new language to be added
+		if (languageToSave == null && StringUtils.isNotEmpty(descriptionToSave)) {
+			languageToSave = makeLanguageEntity(enumLanguage, descriptionToSave, entityDb);
+			saveLanguageEntity(languageToSave);
+
+		}
+
+	}
+
+	private boolean mergeCommonFields(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+		if (entityToSave.getOrder() > Long.valueOf(0))
+		{
+			SequenceNumber sequenceNumber = entityDb.getSequenceNumber();
+			if (sequenceNumber.getNumber() != entityToSave.getOrder())
+			{
+
+				SequenceNumber sequenceNumberNew = sequenceNumberRepo.findOne(entityToSave.getOrder());
+				entityDb.setSequenceNumber(sequenceNumberNew);
+				return true;
+			}
+		}
+		return false;
+
+	}
+
+	public void createNewEntity(long idMenu, EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
+		String descriptionToSave = entityToSave.getDescription();
+		Menu menu = menuRepo.findOne(idMenu);
+		entityToSave.setMenu(menu);
+		entityToSave.setUsername("maurizio01");
+		Language<?> languageToSave = makeLanguageEntity(enumLanguage, descriptionToSave, entityToSave);
+		SequenceNumber sq = new SequenceNumber();
+		sequenceNumberRepo.save(sq);
+		entityToSave.setSequenceNumber(sq);
+		saveEntity(entityToSave);
+		saveLanguageEntity(languageToSave);
 	}
 
 	@Transactional(readOnly = true)
 	public List<? extends EntityWithLanguage> listEntities(long id, EnumLanguage language) {
 
 		initialize();
-		List<? extends EntityWithLanguage> entities = (List<? extends EntityWithLanguage>) entityRepo.findByMenuId(id);
+		Sort sort = new Sort(Direction.ASC, "sequenceNumber");
+		List<? extends EntityWithLanguage> entities = (List<? extends EntityWithLanguage>) entityRepo.findByMenuId(id, sort);
 		for (EntityWithLanguage entity : entities) {
 			entity.mapCustomFields(language);
 			mapCustomFieldsSubEntities(entity, language);
@@ -107,11 +158,6 @@ public abstract class CommonService {
 		entityRepo.delete(Long.valueOf(id));
 	}
 
-	protected static String getUsernameLogged() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return auth.getName();
-	}
-
 	abstract void initialize();
 
 	abstract void saveEntity(EntityWithLanguage entity);
@@ -120,7 +166,7 @@ public abstract class CommonService {
 
 	abstract Language<?> makeLanguageEntity(EnumLanguage enumLanguage, String descriptionToSave, EntityWithLanguage entityToSave);
 
-	abstract void mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb);
+	abstract boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb);
 
 	abstract void mapCustomFieldsSubEntities(EntityWithLanguage entity, EnumLanguage language);
 

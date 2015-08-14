@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,7 +36,7 @@ public class Typedish extends EntityWithLanguage implements Serializable {
 
 	@JsonView(Views.ViewFromTypedish.class)
 	@OneToMany(mappedBy = "typedish", fetch = FetchType.EAGER)
-	// @OrderBy("sequenceNumber")
+	@OrderBy("sequenceNumber ASC")
 	public Set<Dish> getDishes() {
 		return dishes;
 	}

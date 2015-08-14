@@ -5,8 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableJpaRepositories(basePackages = "com.rest.menuforyou.repository")
-@SpringBootApplication(exclude = { org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
-		org.springframework.boot.actuate.autoconfigure.ManagementSecurityAutoConfiguration.class })
+// @SpringBootApplication(exclude = {
+// org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
+// org.springframework.boot.actuate.autoconfigure.ManagementSecurityAutoConfiguration.class
+// })
+@SpringBootApplication
 public class MenuForYouApplication {
 
 	public static void main(String[] args) {

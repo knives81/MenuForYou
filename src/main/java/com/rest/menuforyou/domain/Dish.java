@@ -13,6 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -81,16 +82,22 @@ public class Dish extends EntityWithLanguage implements Serializable {
 		this.typedish = typedish;
 	}
 
-	private Set<Ingredient> ingredients;
+	private Set<Ingredient> ingredients = new HashSet<Ingredient>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "TB_DISH_INGREDIENT", joinColumns = { @JoinColumn(name = "DISH_INGREDIENT_ID1") }, inverseJoinColumns = { @JoinColumn(name = "DISH_INGREDIENT_ID2") })
+	@OrderBy("sequenceNumber ASC")
 	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
 	public void setIngredients(Set<Ingredient> ingredients) {
 		this.ingredients = ingredients;
+	}
+
+	public void addIngredient(Ingredient ingredient)
+	{
+		this.ingredients.add(ingredient);
 	}
 
 	public String toString() {

@@ -59,21 +59,26 @@ public class DishService extends CommonService {
 	}
 
 	@Override
-	void mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+	boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+		boolean needToBeMerged = false;
 		Dish dishDb = (Dish) entityDb;
 		Dish dishToSave = (Dish) entityToSave;
 		if (StringUtils.isNotEmpty(dishToSave.getName())) {
 			dishDb.setName(dishToSave.getName());
+			needToBeMerged = true;
 		}
 		if (StringUtils.isNotEmpty(dishToSave.getImageUrl())) {
 			dishDb.setImageUrl(dishToSave.getImageUrl());
+			needToBeMerged = true;
 		}
 		if (dishToSave.getPrice() > 0.0) {
 			dishDb.setPrice(dishToSave.getPrice());
+			needToBeMerged = true;
 		}
 		if (dishToSave.getTypedish() != null) {
 			Typedish typedish = typedishRepo.findOne(dishToSave.getTypedish().getId());
 			dishDb.setTypedish(typedish);
+			needToBeMerged = true;
 		}
 
 		Set<Ingredient> ingredientsToSave = new HashSet<Ingredient>();
@@ -84,9 +89,9 @@ public class DishService extends CommonService {
 		}
 		if (!ingredientsToSave.isEmpty()) {
 			dishDb.setIngredients(ingredientsToSave);
+			needToBeMerged = true;
 		}
-
-		dishRepository.save(dishDb);
+		return needToBeMerged;
 
 	}
 

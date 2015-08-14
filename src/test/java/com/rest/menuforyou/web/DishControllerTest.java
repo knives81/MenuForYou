@@ -1,13 +1,14 @@
 package com.rest.menuforyou.web;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +19,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.DishBuilder;
+import com.rest.menuforyou.databuilder.IngredientBuilder;
+import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Dish;
-import com.rest.menuforyou.domain.Ingredient;
-import com.rest.menuforyou.domain.Typedish;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
@@ -66,73 +68,100 @@ public class DishControllerTest extends BaseTest {
 
 	@Test
 	public void testCreateDishes() throws Exception {
-		Dish dish = new Dish();
-		dish.setDescription("Lasagna con pomodoro e mozzarella");
-		dish.setName("Lasagna");
-		dish.setPrice(Float.valueOf("10.5"));
-		Typedish typedish = new Typedish();
-		typedish.setId(Long.valueOf(1));
-		dish.setTypedish(typedish);
-		Ingredient ingredient1 = new Ingredient();
-		ingredient1.setId(Long.valueOf(1));
-		Set<Ingredient> ingredients = new HashSet<Ingredient>();
-		ingredients.add(ingredient1);
-		dish.setIngredients(ingredients);
 
-		String dishJson = json(dish);
+		List<Dish> dishes = Arrays.asList(
+				DishBuilder.dish().
+						withDesc("Lasagna con pomodoro e mozzarella").
+						withName("Lasagna").
+						withPrice("10.5").
+						withTypedish(
+								TypedishBuilder.typedish().
+										withId(1).
+										build()).
+						addIngredient(
+								IngredientBuilder.ingredient().
+										withId(1).
+										build()).
+						build());
+
+		String dishesJson = json(dishes);
 		this.mockMvc.perform(post("/menus/1/dishes/?language=IT")
 				.contentType(contentType)
-				.content(dishJson))
+				.content(dishesJson))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void testUpdateDishes() throws Exception {
-		Dish dish = new Dish();
-		dish.setId(Long.valueOf(1));
-		dish.setPrice(Float.valueOf("11.5"));
-		Typedish typedish = new Typedish();
-		typedish.setId(Long.valueOf(1));
-		dish.setTypedish(typedish);
-		Ingredient ingredient1 = new Ingredient();
-		ingredient1.setId(Long.valueOf(2));
-		Ingredient ingredient2 = new Ingredient();
-		ingredient2.setId(Long.valueOf(1));
-		Set<Ingredient> ingredients = new HashSet<Ingredient>();
-		ingredients.add(ingredient1);
-		ingredients.add(ingredient2);
-		dish.setIngredients(ingredients);
 
-		String dishJson = json(dish);
+		List<Dish> dishes = Arrays.asList(
+				DishBuilder.dish().
+						withId(1).
+						withPrice("11.5").
+						withOrder(1).
+						withTypedish(
+								TypedishBuilder.typedish().
+										withId(1).
+										build()).
+						addIngredient(
+								IngredientBuilder.ingredient().
+										withId(2).
+										build()).
+						addIngredient(
+								IngredientBuilder.ingredient().
+										withId(1).
+										build()).
+						build());
+
+		String dishesJson = json(dishes);
 		this.mockMvc.perform(post("/menus/1/dishes/?language=IT")
 				.contentType(contentType)
-				.content(dishJson))
+				.content(dishesJson))
 				.andExpect(status().isCreated());
 	}
 
 	@Test
 	public void testUpdate2Dishes() throws Exception {
-		Dish dish = new Dish();
-		dish.setId(Long.valueOf(1));
-		dish.setName("Gnocco Modified");
-		dish.setDescription("Gnocco Language Modified");
-		Typedish typedish = new Typedish();
-		typedish.setId(Long.valueOf(2));
-		dish.setTypedish(typedish);
-		Ingredient ingredient1 = new Ingredient();
-		ingredient1.setId(Long.valueOf(3));
-		Ingredient ingredient2 = new Ingredient();
-		ingredient2.setId(Long.valueOf(4));
-		Set<Ingredient> ingredients = new HashSet<Ingredient>();
-		ingredients.add(ingredient1);
-		ingredients.add(ingredient2);
-		dish.setIngredients(ingredients);
+		List<Dish> dishes = Arrays.asList(
+				DishBuilder.dish().
+						withId(1).
+						withName("Gnocco Modified").
+						withDesc("Gnocco Language Modified").
+						withOrder(1).
+						withTypedish(
+								TypedishBuilder.typedish().
+										withId(2).
+										build()).
+						addIngredient(
+								IngredientBuilder.ingredient().
+										withId(3).
+										build()).
+						addIngredient(
+								IngredientBuilder.ingredient().
+										withId(4).
+										build()).
+						build());
 
-		String dishJson = json(dish);
-		this.mockMvc.perform(post("/menus/1/dishes/?language=IT")
+		String dishesJson = json(dishes);
+		mockMvc.perform(post("/menus/1/dishes/?language=IT")
 				.contentType(contentType)
-				.content(dishJson))
+				.content(dishesJson))
 				.andExpect(status().isCreated());
+
+		mockMvc.perform(get("/dishes/1?language=IT")).
+				andExpect(status().isOk()).
+				andExpect(jsonPath("$.id").value(1)).
+				andExpect(jsonPath("$.order").value(1)).
+				andExpect(jsonPath("$.description").value("Gnocco Language Modified")).
+				andExpect(jsonPath("$.typedish.id").value(2)).
+				andExpect(jsonPath("$.ingredients[0].id").value(3)).
+				andExpect(jsonPath("$.ingredients[1].id").value(4));
 	}
 
+	@Test
+	public void testDeleteDish() throws Exception {
+
+		mockMvc.perform(delete("/dishes/1")).
+				andExpect(status().isOk());
+	}
 }

@@ -10,6 +10,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TB_MENU")
 public class Menu {
+
+	public Menu() {
+	}
+
+	public Menu(String name) {
+		this.name = name;
+	}
+
 	private Long id;
 
 	@Id
