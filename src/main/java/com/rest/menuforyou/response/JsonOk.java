@@ -1,41 +1,33 @@
 package com.rest.menuforyou.response;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JsonOk implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String type;
-	private String id;
+	final private String type;
+	final private List<Long> ids;
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public JsonOk(String type, List<Long> ids) {
 		this.type = type;
+		this.ids = ids;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public JsonOk(String type, String id) {
-		this.type = type;
-		this.id = id;
-	}
-	public JsonOk(String id) {
-		this.type =  "success";;
-		this.id = id;
+	public JsonOk(List<Long> ids) {
+		this.type = "success";
+		;
+		this.ids = ids;
 	}
 
 	public JsonOk() {
 		this.type = "success";
-		this.id = "0";
+		this.ids = new ArrayList<Long>();
 	}
 
 }

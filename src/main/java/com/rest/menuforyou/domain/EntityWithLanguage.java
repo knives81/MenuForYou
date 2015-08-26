@@ -1,6 +1,7 @@
 package com.rest.menuforyou.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -79,6 +82,18 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 
 	public void setSequenceNumber(SequenceNumber order) {
 		this.sequenceNumber = order;
+	}
+
+	private Date lastTouched;
+
+	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastTouched() {
+		return lastTouched;
+	}
+
+	public void setLastTouched(Date lastTouched) {
+		this.lastTouched = lastTouched;
 	}
 
 	private Menu menu;

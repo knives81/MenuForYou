@@ -13,21 +13,21 @@ curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8082/menuforyou/menus/1/dishes?language=IT
 curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET http://localhost:8082/menuforyou/menus/1/dishes?language=EN
 
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/ingredients?language=IT -d '[{"description":"farina"}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/ingredients?language=IT -d '[{"id":"2","description":"Sugar Modified"}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/ingredients?language=IT -d '[{"id":"2","order":"1"}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/ingredients?language=IT -d '[{"id":"2","order":"2"},{"id":"3","order":"3"}]'
+curl -i  -X POST -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/ingredients?language=IT -d '[{"description":"farina"}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/ingredients?language=IT -d '[{"id":"2","description":"Sugar Modified"}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/ingredients?language=IT -d '[{"id":"2","order":"1"}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/ingredients?language=IT -d '[{"id":"2","order":"2"},{"id":"3","order":"3"}]'
 
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/typedishes?language=EN -d '[{"description":"PizzaWrong"}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/typedishes?language=EN -d '[{"id":"3","description":"Appetizer EN Modified"}]'
+curl -i  -X POST -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/typedishes?language=EN -d '[{"description":"PizzaWrong"}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/typedishes?language=EN -d '[{"id":"3","description":"Appetizer EN Modified"}]'
 
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/dishes?language=EN -d '[{"description":"Lasagna con pomodoro e mozzarella","name":"Lasagna","price":10.5,"typedish":{"id":1},"ingredients":[{"id":"1"}]}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/dishes?language=EN -d '[{"id":"1","price":11.5,"typedish":{"id":1},"ingredients":[{"id":"2"},{"id":"1"}]}]'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/dishes?language=EN -d '[{"id":"1","name":"Gnocco Modified","description":"Gnocco Language Modified","typedish":{"id":2},"ingredients":[{"id":"3"},{"id":"4"}]}]'
+curl -i  -X POST -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/menus/1/dishes?language=EN -d '[{"description":"Lasagna con pomodoro e mozzarella","name":"Lasagna","price":10.5,"typedish":{"id":1},"ingredients":[{"id":"1"}]}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"1","price":11.5,"typedish":{"id":1},"ingredients":[{"id":"2"},{"id":"1"}]}]'
+curl -i  -X PUT  -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"1","name":"Gnocco Modified","description":"Gnocco Language Modified","typedish":{"id":2},"ingredients":[{"id":"3"},{"id":"4"}]}]'
 
 curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante02","address":"via del corso","user":{"username":"maurizio03","password":"password","enabled":"true"},"menu":{"name":"menu02"}}'
-curl -i  -X POST -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante03 menu 01","address":"via del bosco"}'
+curl -i  -X PUT -u maurizio01:password -H "Content-Type:application/json" http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante03 menu 01","address":"via del bosco"}'
 
-curl -i -X POST -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadRestaurantImage?id=1
-curl -i -X POST -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadDishImage?id=1
+curl -i -X POST -u maurizio01:password -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadRestaurantImage?id=1
+curl -i -X POST -u maurizio01:password -F "file=@/Users/mauriziopinzi/Desktop/foto.jpg" http://localhost:8082/menuforyou/uploadDishImage?id=1
 

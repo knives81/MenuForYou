@@ -26,17 +26,16 @@ public class IngredientController {
 	@RequestMapping(value = "/menus/{id}/ingredients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk saveIngredient(@PathVariable long id, @RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
-		Long idIngredient = Long.valueOf(0);
-		idIngredient = ingredientService.saveEntities(id, entities, language);
-		return new JsonOk(idIngredient.toString());
+		List<Long> ids = ingredientService.saveEntities(id, entities, language);
+		return new JsonOk(ids);
 
 	}
 
 	@RequestMapping(value = "/ingredients", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk updateDishes(@RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
-		ingredientService.updateEntities(entities, language);
-		return new JsonOk();
+		List<Long> ids = ingredientService.updateEntities(entities, language);
+		return new JsonOk(ids);
 
 	}
 

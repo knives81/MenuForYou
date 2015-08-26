@@ -1,11 +1,14 @@
 package com.rest.menuforyou.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -60,6 +63,18 @@ public class User implements Serializable {
 
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	private Date lastTouched;
+
+	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastTouched() {
+		return lastTouched;
+	}
+
+	public void setLastTouched(Date lastTouched) {
+		this.lastTouched = lastTouched;
 	}
 
 }

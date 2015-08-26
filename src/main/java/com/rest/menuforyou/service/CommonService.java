@@ -1,5 +1,6 @@
 package com.rest.menuforyou.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,34 +39,33 @@ public abstract class CommonService {
 	}
 
 	@Transactional(readOnly = false)
-	public Long saveEntities(long idMenu, List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
+	public List<Long> saveEntities(long idMenu, List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
 		initialize();
-		Long lastId = Long.valueOf(0);
+		List<Long> ids = new ArrayList<Long>();
 		for (EntityWithLanguage entityToSave : entitiesToSave) {
 			saveSingleEntity(idMenu, entityToSave, enumLanguage);
-			lastId = entityToSave.getId();
-
+			ids.add(entityToSave.getId());
 		}
-		return lastId;
+		return ids;
 	}
 
 	@Transactional(readOnly = false)
-	public Long updateEntities(List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
+	public List<Long> updateEntities(List<? extends EntityWithLanguage> entitiesToSave, EnumLanguage enumLanguage) {
 		initialize();
-		Long lastId = Long.valueOf(0);
+		List<Long> ids = new ArrayList<Long>();
 		for (EntityWithLanguage entityToSave : entitiesToSave) {
 			updateExistingEntity(entityToSave, enumLanguage);
-			lastId = entityToSave.getId();
+			ids.add(entityToSave.getId());
 
 		}
-		return lastId;
+		return ids;
 	}
 
 	public void saveSingleEntity(long idMenu, EntityWithLanguage entityToSave, EnumLanguage enumLanguage) {
-		if (entityToSave.getId() != null) {
-			updateExistingEntity(entityToSave, enumLanguage);
-		} else {
+		if (entityToSave.getId() == null) {
 			createNewEntity(idMenu, entityToSave, enumLanguage);
+		} else {
+			// TODO exception
 		}
 	}
 
@@ -101,7 +101,7 @@ public abstract class CommonService {
 	}
 
 	private boolean mergeCommonFields(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
-		if (entityToSave.getOrder() > Long.valueOf(0))
+		if (entityToSave.getOrder() != null)
 		{
 			SequenceNumber sequenceNumber = entityDb.getSequenceNumber();
 			if (sequenceNumber.getNumber() != entityToSave.getOrder())

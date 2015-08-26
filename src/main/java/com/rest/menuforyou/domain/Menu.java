@@ -1,11 +1,15 @@
 package com.rest.menuforyou.domain;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "TB_MENU")
@@ -40,6 +44,18 @@ public class Menu {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	private Date lastTouched;
+
+	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastTouched() {
+		return lastTouched;
+	}
+
+	public void setLastTouched(Date lastTouched) {
+		this.lastTouched = lastTouched;
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.rest.menuforyou.web;
 
 import java.net.BindException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -31,10 +33,9 @@ public class RestaurantController {
 	@RequestMapping(value = "/restaurants", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk createRestaurant(@Valid @RequestBody Restaurant restaurant) throws BindException {
-		Long id = Long.valueOf(0);
-		id = restaurantService.createRestaurant(restaurant);
-
-		return new JsonOk(id.toString());
+		Long id = restaurantService.createRestaurant(restaurant);
+		List<Long> ids = Collections.singletonList(id);
+		return new JsonOk(ids);
 	}
 
 	@RequestMapping(value = "/restaurants", method = RequestMethod.PUT)
@@ -42,7 +43,8 @@ public class RestaurantController {
 	public JsonOk addRestaurant(@Valid @RequestBody Restaurant restaurant) throws BindException {
 		Long id = Long.valueOf(0);
 		id = restaurantService.addRestaurant(restaurant);
-		return new JsonOk(id.toString());
+		List<Long> ids = Collections.singletonList(id);
+		return new JsonOk(ids);
 	}
 
 	@RequestMapping(value = "/restaurants", method = RequestMethod.GET)

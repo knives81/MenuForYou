@@ -31,16 +31,15 @@ public class TypedishController {
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk saveTypedish(@PathVariable long id, @RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
-		Long idTypedish = Long.valueOf(0);
-		idTypedish = typedishService.saveEntities(id, entities, language);
-		return new JsonOk(idTypedish.toString());
+		List<Long> ids = typedishService.saveEntities(id, entities, language);
+		return new JsonOk(ids);
 	}
 
 	@RequestMapping(value = "/typedishes", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk updateDishes(@RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
-		typedishService.updateEntities(entities, language);
-		return new JsonOk();
+		List<Long> ids = typedishService.updateEntities(entities, language);
+		return new JsonOk(ids);
 
 	}
 
