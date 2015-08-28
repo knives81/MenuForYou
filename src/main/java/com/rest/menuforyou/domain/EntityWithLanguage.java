@@ -84,18 +84,6 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 		this.sequenceNumber = order;
 	}
 
-	private Date lastTouched;
-
-	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getLastTouched() {
-		return lastTouched;
-	}
-
-	public void setLastTouched(Date lastTouched) {
-		this.lastTouched = lastTouched;
-	}
-
 	private Menu menu;
 
 	@ManyToOne(optional = false)
@@ -107,6 +95,18 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 
 	public void setMenu(Menu menu) {
 		this.menu = menu;
+	}
+
+	private Date lastTouched;
+
+	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getLastTouched() {
+		return lastTouched;
+	}
+
+	public void setLastTouched(Date lastTouched) {
+		this.lastTouched = lastTouched;
 	}
 
 	public void mapCustomFields(EnumLanguage language) {

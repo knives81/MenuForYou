@@ -59,10 +59,10 @@ public class DishService extends CommonService {
 	}
 
 	@Override
-	boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+	boolean mergeCustomFields(EntityWithLanguage entityInput, EntityWithLanguage entityDb) {
 		boolean needToBeMerged = false;
 		Dish dishDb = (Dish) entityDb;
-		Dish dishToSave = (Dish) entityToSave;
+		Dish dishToSave = (Dish) entityInput;
 		if (StringUtils.isNotEmpty(dishToSave.getName())) {
 			dishDb.setName(dishToSave.getName());
 			needToBeMerged = true;
@@ -80,7 +80,6 @@ public class DishService extends CommonService {
 			dishDb.setTypedish(typedish);
 			needToBeMerged = true;
 		}
-
 		Set<Ingredient> ingredientsToSave = new HashSet<Ingredient>();
 		for (Ingredient ingredient : dishToSave.getIngredients()) {
 			Ingredient ingredientDummy = ingredientRepo.findOne(ingredient.getId());

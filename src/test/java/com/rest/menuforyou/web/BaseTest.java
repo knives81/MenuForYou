@@ -14,11 +14,15 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class BaseTest {
 
 	protected MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	protected MockMvc mockMvc;
+
+	protected ObjectMapper mapper;
 
 	@Autowired
 	protected WebApplicationContext webApplicationContext;

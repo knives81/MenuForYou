@@ -30,18 +30,15 @@ public class DishController {
 
 	@RequestMapping(value = "/menus/{id}/dishes", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonOk saveDishes(@PathVariable long id, @RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
-		List<Long> ids = dishService.saveEntities(id, entities, language);
-		return new JsonOk(ids);
+	public List<Dish> saveDishes(@PathVariable long id, @RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
+		return (List<Dish>) dishService.createEntities(id, entities, language);
 
 	}
 
 	@RequestMapping(value = "/dishes", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonOk updateDishes(@RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
-
-		List<Long> ids = dishService.updateEntities(entities, language);
-		return new JsonOk(ids);
+	public List<Dish> updateDishes(@RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
+		return (List<Dish>) dishService.updateEntities(entities, language);
 
 	}
 

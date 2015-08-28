@@ -1,9 +1,11 @@
 package com.rest.menuforyou.web;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,11 +18,14 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.menuforyou.MenuForYouApplication;
 import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Typedish;
+import com.rest.menuforyou.response.JsonOk;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
@@ -29,6 +34,7 @@ public class TypedishControllerTest extends BaseTest {
 
 	@Before
 	public void setup() throws Exception {
+		this.mapper = new ObjectMapper();
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 	}
@@ -67,10 +73,21 @@ public class TypedishControllerTest extends BaseTest {
 						build());
 
 		String typedishesJson = json(typedishes);
-		this.mockMvc.perform(post("/menus/1/typedishes/?language=IT")
+		MvcResult result = mockMvc.perform(post("/menus/1/typedishes/?language=IT")
+				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(typedishesJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		JsonOk jsonOk = mapper.readValue(result.getResponse().getContentAsString(), JsonOk.class);
+		Long id = jsonOk.getIds().get(0);
+
+		mockMvc.perform(get("/typedishes/" + id + "?language=IT"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(id.intValue()))
+				.andExpect(jsonPath("$.description").value("PizzaWrong"));
+
 	}
 
 	@Test
@@ -84,17 +101,23 @@ public class TypedishControllerTest extends BaseTest {
 
 		String typedishesJson = json(typedishes);
 
-		this.mockMvc.perform(post("/menus/1/typedishes/?language=IT")
+		mockMvc.perform(put("/typedishes/?language=IT")
+				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(typedishesJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.type").value("success"))
+				.andExpect(jsonPath("$.ids", hasSize(1)));
+
 	}
 
 	@Test
 	public void testDeleteTypedish() throws Exception {
 
-		mockMvc.perform(delete("/typedishes/3")).
-				andExpect(status().isOk());
+		mockMvc.perform(delete("/typedishes/3")
+				.with(user("maurizio01").roles("ADMIN")))
+				.andExpect(status().isOk());
+		// TODO test get id deleted
 	}
 
 }

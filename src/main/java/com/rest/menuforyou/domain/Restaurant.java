@@ -95,7 +95,8 @@ public class Restaurant implements Serializable {
 
 	private Date lastTouched;
 
-	@Column(name = "LastTouched", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+	@Column(name = "LastTouched", columnDefinition =
+			"TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getLastTouched() {
 		return lastTouched;

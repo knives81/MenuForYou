@@ -1,9 +1,11 @@
 package com.rest.menuforyou.web;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -18,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.menuforyou.MenuForYouApplication;
 import com.rest.menuforyou.databuilder.IngredientBuilder;
 import com.rest.menuforyou.domain.Ingredient;
@@ -29,6 +32,7 @@ public class IngredientControllerTest extends BaseTest {
 
 	@Before
 	public void setup() throws Exception {
+		this.mapper = new ObjectMapper();
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 	}
@@ -66,35 +70,54 @@ public class IngredientControllerTest extends BaseTest {
 				IngredientBuilder.ingredient().
 						withDesc("Farina").
 						build());
-
 		String ingredientsJson = json(ingredients);
-		this.mockMvc.perform(post("/menus/1/ingredients/?language=IT")
+		mockMvc.perform(post("/menus/1/ingredients/?language=IT")
+				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(ingredientsJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$[0].id").value(5))
+				.andExpect(jsonPath("$[0].description").value("Farina"));
+
+		// JsonOk jsonOk =
+		// mapper.readValue(result.getResponse().getContentAsString(),
+		// JsonOk.class);
+		// Long id = jsonOk.getIds().get(0);
+		//
+		// mockMvc.perform(get("/ingredients/" + id + "?language=IT"))
+		// .andExpect(status().isOk())
+		// .andExpect(jsonPath("$.id").value(id.intValue()))
+		// .andExpect(jsonPath("$.description").value("Farina"));
+
 	}
 
 	@Test
 	public void testUpdateIngredient() throws Exception {
 
 		List<Ingredient> ingredients = Arrays.asList(
-				IngredientBuilder.ingredient().
-						withId(1).
-						withDesc("Sugar Modified").
-						build());
+				IngredientBuilder.ingredient()
+						.withId(1)
+						.withDesc("Sugar Modified")
+						.build());
 
 		String ingredientsJson = json(ingredients);
-		this.mockMvc.perform(post("/menus/1/ingredients/?language=EN")
+		this.mockMvc.perform(put("/ingredients/?language=EN")
+				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(ingredientsJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$.type").value("success"))
+				.andExpect(jsonPath("$.ids", hasSize(1)));
 	}
 
 	@Test
 	public void testDeleteIngredient() throws Exception {
 
-		mockMvc.perform(delete("/ingredients/1")).
-				andExpect(status().isOk());
+		mockMvc.perform(delete("/ingredients/1")
+				.with(user("maurizio01").roles("ADMIN")))
+				.andExpect(status().isOk());
+
+		// TODO test get id deleted
 
 	}
 

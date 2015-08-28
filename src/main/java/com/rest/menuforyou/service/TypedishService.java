@@ -47,7 +47,7 @@ public class TypedishService extends CommonService {
 	}
 
 	@Override
-	boolean mergeEntity(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
+	boolean mergeCustomFields(EntityWithLanguage entityToSave, EntityWithLanguage entityDb) {
 		return false;
 
 	}

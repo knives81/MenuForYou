@@ -25,24 +25,20 @@ public class IngredientController {
 
 	@RequestMapping(value = "/menus/{id}/ingredients", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonOk saveIngredient(@PathVariable long id, @RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
-		List<Long> ids = ingredientService.saveEntities(id, entities, language);
-		return new JsonOk(ids);
+	public List<Ingredient> saveIngredient(@PathVariable long id, @RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
+		return (List<Ingredient>) ingredientService.createEntities(id, entities, language);
 
 	}
 
 	@RequestMapping(value = "/ingredients", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
-	public JsonOk updateDishes(@RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
-		List<Long> ids = ingredientService.updateEntities(entities, language);
-		return new JsonOk(ids);
-
+	public List<Ingredient> updateDishes(@RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
+		return (List<Ingredient>) ingredientService.updateEntities(entities, language);
 	}
 
 	@RequestMapping(value = "/menus/{id}/ingredients", method = RequestMethod.GET)
 	public List<Ingredient> listIngredient(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
 		return (List<Ingredient>) ingredientService.listEntities(id, language);
-
 	}
 
 	@RequestMapping(value = "/ingredients/{id}", method = RequestMethod.GET)
