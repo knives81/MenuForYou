@@ -32,7 +32,7 @@ public class Typedish extends EntityWithLanguage implements Serializable {
 		this.entitiesLang = entitiesLang;
 	}
 
-	private Set<Dish> dishes;
+	private Set<Dish> dishes = new HashSet<Dish>();
 
 	@JsonView(Views.ViewFromTypedish.class)
 	@OneToMany(mappedBy = "typedish", fetch = FetchType.EAGER)

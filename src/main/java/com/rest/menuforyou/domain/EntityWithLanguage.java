@@ -3,6 +3,7 @@ package com.rest.menuforyou.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -37,18 +38,6 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 		this.id = id;
 	}
 
-	private String username;
-
-	@Column(name = "USER")
-	@JsonIgnore
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	private String description;
 
 	@Transient
@@ -76,6 +65,7 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ORDERDISPLAY")
 	@JsonIgnore
+	@Basic(optional = false)
 	public SequenceNumber getSequenceNumber() {
 		return sequenceNumber;
 	}

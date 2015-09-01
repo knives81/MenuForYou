@@ -18,7 +18,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +26,6 @@ import com.rest.menuforyou.databuilder.DishBuilder;
 import com.rest.menuforyou.databuilder.IngredientBuilder;
 import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Dish;
-import com.rest.menuforyou.response.JsonOk;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
@@ -91,20 +89,15 @@ public class DishControllerTest extends BaseTest {
 						build());
 
 		String dishesJson = json(dishes);
-		MvcResult result = mockMvc.perform(post("/menus/1/dishes/?language=IT")
+		mockMvc.perform(post("/menus/1/dishes/?language=IT")
 				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(dishesJson))
 				.andExpect(status().isCreated())
-				.andReturn();
+				.andExpect(jsonPath("$[0].id").value(4))
+				.andExpect(jsonPath("$[0].description").value("Lasagna con pomodoro e mozzarella"))
+				.andExpect(jsonPath("$[0].order").value(11));
 
-		JsonOk jsonOk = mapper.readValue(result.getResponse().getContentAsString(), JsonOk.class);
-		Long id = jsonOk.getIds().get(0);
-
-		mockMvc.perform(get("/dishes/" + id + "?language=IT"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(id.intValue()))
-				.andExpect(jsonPath("$.description").value("Lasagna con pomodoro e mozzarella"));
 	}
 
 	@Test
@@ -134,9 +127,9 @@ public class DishControllerTest extends BaseTest {
 				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(dishesJson))
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.type").value("success"))
-				.andExpect(jsonPath("$.ids", hasSize(1)));
+				.andExpect(jsonPath("$[0].id").value(1))
+				.andExpect(jsonPath("$[0].order").value(1))
+				.andExpect(jsonPath("$[0].price").value(Double.valueOf("11.5")));
 	}
 
 	@Test
@@ -162,20 +155,18 @@ public class DishControllerTest extends BaseTest {
 						build());
 
 		String dishesJson = json(dishes);
-		mockMvc.perform(put("dishes/?language=IT")
+		mockMvc.perform(put("/dishes/?language=IT")
 				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(dishesJson))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("$[0].id").value(1))
+				.andExpect(jsonPath("$[0].order").value(1))
+				.andExpect(jsonPath("$[0].description").value("Gnocco Language Modified"))
+				.andExpect(jsonPath("$[0].typedish.id").value(2))
+				.andExpect(jsonPath("$[0].ingredients[0].id").value(4))
+				.andExpect(jsonPath("$[0].ingredients[1].id").value(3));
 
-		mockMvc.perform(get("/dishes/1?language=IT")).
-				andExpect(status().isOk()).
-				andExpect(jsonPath("$.id").value(1)).
-				andExpect(jsonPath("$.order").value(1)).
-				andExpect(jsonPath("$.description").value("Gnocco Language Modified")).
-				andExpect(jsonPath("$.typedish.id").value(2)).
-				andExpect(jsonPath("$.ingredients[0].id").value(3)).
-				andExpect(jsonPath("$.ingredients[1].id").value(4));
 	}
 
 	@Test

@@ -69,6 +69,18 @@ public class Dish extends EntityWithLanguage implements Serializable {
 		this.entitiesLang = entitiesLang;
 	}
 
+	private Set<Feedback> feedbacks = new HashSet<Feedback>();
+
+	@JsonView(Views.ViewWithFeedback.class)
+	@OneToMany(mappedBy = "dish", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+	public Set<Feedback> getFeedbacks() {
+		return feedbacks;
+	}
+
+	public void setFeedbacks(Set<Feedback> feedbacks) {
+		this.feedbacks = feedbacks;
+	}
+
 	private Typedish typedish;
 
 	@JsonView(Views.ViewFromDish.class)
@@ -87,6 +99,7 @@ public class Dish extends EntityWithLanguage implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "TB_DISH_INGREDIENT", joinColumns = { @JoinColumn(name = "DISH_INGREDIENT_ID1") }, inverseJoinColumns = { @JoinColumn(name = "DISH_INGREDIENT_ID2") })
 	@OrderBy("sequenceNumber ASC")
+	@JsonView(Views.ViewWithIngredient.class)
 	public Set<Ingredient> getIngredients() {
 		return ingredients;
 	}

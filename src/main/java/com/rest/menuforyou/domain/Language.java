@@ -2,6 +2,7 @@ package com.rest.menuforyou.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -64,6 +65,7 @@ public class Language<T extends EntityWithLanguage> implements Serializable {
 	}
 
 	@Column(name = "LANG_DESCRIPTION")
+	@Basic(optional = false)
 	public String getDescription() {
 		return description;
 	}

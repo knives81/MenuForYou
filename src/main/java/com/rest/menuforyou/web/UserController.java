@@ -10,17 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rest.menuforyou.domain.User;
 import com.rest.menuforyou.response.JsonOk;
-import com.rest.menuforyou.service.UserService;
+import com.rest.menuforyou.service.InitService;
 
 @RestController
 public class UserController {
+
 	@Autowired
-	private UserService userService;
+	private InitService userCreationService;
 
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public JsonOk saveUser(@RequestBody User user) {
-		// userService.saveUser(user);
+		userCreationService.createUser(user);
 		return new JsonOk();
 	}
 

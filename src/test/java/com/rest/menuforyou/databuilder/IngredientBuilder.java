@@ -5,8 +5,7 @@ import com.rest.menuforyou.domain.Ingredient;
 public class IngredientBuilder {
 	Ingredient ingredient = new Ingredient();
 
-	public static IngredientBuilder ingredient()
-	{
+	public static IngredientBuilder ingredient() {
 		return new IngredientBuilder();
 	}
 
@@ -14,14 +13,12 @@ public class IngredientBuilder {
 		return ingredient;
 	}
 
-	public IngredientBuilder withId(int id)
-	{
+	public IngredientBuilder withId(int id) {
 		ingredient.setId(Long.valueOf(id));
 		return this;
 	}
 
-	public IngredientBuilder withDesc(String desc)
-	{
+	public IngredientBuilder withDesc(String desc) {
 		ingredient.setDescription(desc);
 		return this;
 	}

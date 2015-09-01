@@ -18,6 +18,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.rest.menuforyou.domain.Dish;
 import com.rest.menuforyou.domain.EnumLanguage;
 import com.rest.menuforyou.domain.Views;
+import com.rest.menuforyou.error.DeleteException;
+import com.rest.menuforyou.error.ResourceNotFoundException;
+import com.rest.menuforyou.error.SaveException;
 import com.rest.menuforyou.response.JsonOk;
 import com.rest.menuforyou.service.DishService;
 
@@ -30,39 +33,62 @@ public class DishController {
 
 	@RequestMapping(value = "/menus/{id}/dishes", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public List<Dish> saveDishes(@PathVariable long id, @RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
-		return (List<Dish>) dishService.createEntities(id, entities, language);
+	public String saveDishes(@PathVariable long id, @RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
+		try {
+			List<Dish> dishes = (List<Dish>) dishService.createEntities(id, entities, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
+			return objectWriter.writeValueAsString(dishes);
+		} catch (Exception e) {
+			throw new SaveException("Exception Dish save", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/dishes", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
-	public List<Dish> updateDishes(@RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
-		return (List<Dish>) dishService.updateEntities(entities, language);
+	public String updateDishes(@RequestBody List<Dish> entities, @RequestParam("language") EnumLanguage language) {
+		try {
+			List<Dish> dishes = (List<Dish>) dishService.updateEntities(entities, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
+			return objectWriter.writeValueAsString(dishes);
+		} catch (Exception e) {
+			throw new SaveException("Exception Dish save", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/menus/{id}/dishes", method = RequestMethod.GET)
 	public String listDish(@PathVariable long id, @RequestParam("language") EnumLanguage language) throws JsonProcessingException {
-
-		List<Dish> dishes = (List<Dish>) dishService.listEntities(id, language);
-		ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
-		return objectWriter.writeValueAsString(dishes);
+		try {
+			List<Dish> dishes = (List<Dish>) dishService.listEntities(id, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
+			return objectWriter.writeValueAsString(dishes);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("Exception Dish load", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/dishes/{id}", method = RequestMethod.GET)
 	public String getDish(@PathVariable long id, @RequestParam("language") EnumLanguage language) throws JsonProcessingException {
-		Dish dish = (Dish) dishService.getEntity(id, language);
-		ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
-		return objectWriter.writeValueAsString(dish);
+		try {
+			Dish dish = (Dish) dishService.getEntity(id, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
+			return objectWriter.writeValueAsString(dish);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("Exception Dish load", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/dishes/{id}", method = RequestMethod.DELETE)
 	public JsonOk deleteDish(@PathVariable long id) {
-		dishService.deleteEntity(id);
-		return new JsonOk();
+		try {
+			dishService.deleteEntity(id);
+			return new JsonOk();
+		} catch (Exception e) {
+			throw new DeleteException("Exception Dish delete", e);
+		}
 
 	}
 

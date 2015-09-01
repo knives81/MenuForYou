@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.rest.menuforyou.domain.EnumLanguage;
 import com.rest.menuforyou.domain.Typedish;
 import com.rest.menuforyou.domain.Views;
+import com.rest.menuforyou.error.DeleteException;
+import com.rest.menuforyou.error.ResourceNotFoundException;
+import com.rest.menuforyou.error.SaveException;
 import com.rest.menuforyou.response.JsonOk;
 import com.rest.menuforyou.service.TypedishService;
 
@@ -31,36 +33,55 @@ public class TypedishController {
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<Typedish> saveTypedish(@PathVariable long id, @RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
-		return (List<Typedish>) typedishService.createEntities(id, entities, language);
+		try {
+			return (List<Typedish>) typedishService.createEntities(id, entities, language);
+		} catch (Exception e) {
+			throw new SaveException("Exception Typedish save", e);
+		}
 	}
 
 	@RequestMapping(value = "/typedishes", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<Typedish> updateDishes(@RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
-		return (List<Typedish>) typedishService.updateEntities(entities, language);
+		try {
+			return (List<Typedish>) typedishService.updateEntities(entities, language);
+		} catch (Exception e) {
+			throw new SaveException("Exception Typedish save", e);
+		}
 	}
 
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.GET)
-	public String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) throws JsonProcessingException {
-
-		List<Typedish> typedishes = (List<Typedish>) typedishService.listEntities(id, language);
-		ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
-		return objectWriter.writeValueAsString(typedishes);
+	public String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
+		try {
+			List<Typedish> typedishes = (List<Typedish>) typedishService.listEntities(id, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
+			return objectWriter.writeValueAsString(typedishes);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("Exception Typedish load", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/typedishes/{id}", method = RequestMethod.GET)
-	public String getTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) throws JsonProcessingException {
-		Typedish typedish = (Typedish) typedishService.getEntity(id, language);
-		ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
-		return objectWriter.writeValueAsString(typedish);
+	public String getTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
+		try {
+			Typedish typedish = (Typedish) typedishService.getEntity(id, language);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
+			return objectWriter.writeValueAsString(typedish);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException("Exception Typedish load", e);
+		}
 
 	}
 
 	@RequestMapping(value = "/typedishes/{id}", method = RequestMethod.DELETE)
 	public JsonOk deleteTypedish(@PathVariable long id) throws Exception {
-		typedishService.deleteEntity(id);
-		return new JsonOk();
+		try {
+			typedishService.deleteEntity(id);
+			return new JsonOk();
+		} catch (Exception e) {
+			throw new DeleteException("Exception Typedish delete", e);
+		}
 	}
 
 }

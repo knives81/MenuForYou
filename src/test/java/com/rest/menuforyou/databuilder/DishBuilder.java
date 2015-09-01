@@ -7,8 +7,7 @@ import com.rest.menuforyou.domain.Typedish;
 public class DishBuilder {
 	Dish dish = new Dish();
 
-	public static DishBuilder dish()
-	{
+	public static DishBuilder dish() {
 		return new DishBuilder();
 	}
 

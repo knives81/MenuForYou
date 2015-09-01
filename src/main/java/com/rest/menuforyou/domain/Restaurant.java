@@ -3,6 +3,7 @@ package com.rest.menuforyou.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "TB_RESTAURANT")
@@ -38,6 +39,7 @@ public class Restaurant implements Serializable {
 	private String name;
 
 	@Column(name = "RESTAURANT_NAME")
+	@Basic(optional = false)
 	public String getName() {
 		return name;
 	}
@@ -70,9 +72,10 @@ public class Restaurant implements Serializable {
 
 	private User user;
 
-	@JsonView(Views.ViewWithUser.class)
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name = "RESTAURANT_USER")
+	@Basic(optional = false)
 	public User getUser() {
 		return user;
 	}

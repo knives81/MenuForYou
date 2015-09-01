@@ -2,14 +2,19 @@ package com.rest.menuforyou.domain;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "TB_MENU")
@@ -57,6 +62,20 @@ public class Menu {
 
 	public void setLastTouched(Date lastTouched) {
 		this.lastTouched = lastTouched;
+	}
+
+	private User user;
+
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "USER")
+	@Basic(optional = false)
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

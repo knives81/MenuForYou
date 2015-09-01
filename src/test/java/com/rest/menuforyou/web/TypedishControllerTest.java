@@ -18,14 +18,12 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.menuforyou.MenuForYouApplication;
 import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Typedish;
-import com.rest.menuforyou.response.JsonOk;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
@@ -73,20 +71,14 @@ public class TypedishControllerTest extends BaseTest {
 						build());
 
 		String typedishesJson = json(typedishes);
-		MvcResult result = mockMvc.perform(post("/menus/1/typedishes/?language=IT")
+		mockMvc.perform(post("/menus/1/typedishes/?language=IT")
 				.with(user("maurizio01").roles("ADMIN"))
 				.contentType(contentType)
 				.content(typedishesJson))
 				.andExpect(status().isCreated())
-				.andReturn();
-
-		JsonOk jsonOk = mapper.readValue(result.getResponse().getContentAsString(), JsonOk.class);
-		Long id = jsonOk.getIds().get(0);
-
-		mockMvc.perform(get("/typedishes/" + id + "?language=IT"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(id.intValue()))
-				.andExpect(jsonPath("$.description").value("PizzaWrong"));
+				.andExpect(jsonPath("$[0].id").value(4))
+				.andExpect(jsonPath("$[0].description").value("PizzaWrong"))
+				.andExpect(jsonPath("$[0].order").value(11));
 
 	}
 
@@ -106,8 +98,9 @@ public class TypedishControllerTest extends BaseTest {
 				.contentType(contentType)
 				.content(typedishesJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.type").value("success"))
-				.andExpect(jsonPath("$.ids", hasSize(1)));
+				.andExpect(jsonPath("$[0].id").value(3))
+				.andExpect(jsonPath("$[0].description").value("Appetizer EN Modified"))
+				.andExpect(jsonPath("$[0].order").value(3));
 
 	}
 

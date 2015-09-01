@@ -11,8 +11,6 @@ public interface EntityLanguageble {
 
 	public abstract void setMenu(Menu menu);
 
-	public abstract void setUsername(String username);
-
 	public abstract Long getId();
 
 	public abstract void mapCustomFields(EnumLanguage language);

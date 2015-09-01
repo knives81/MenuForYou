@@ -1,23 +1,19 @@
 package com.rest.menuforyou.service;
 
-import java.util.List;
+import java.util.Date;
 
-import org.hibernate.exception.ConstraintViolationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rest.menuforyou.domain.Menu;
 import com.rest.menuforyou.domain.Restaurant;
 import com.rest.menuforyou.domain.User;
-import com.rest.menuforyou.error.Error;
-import com.rest.menuforyou.error.GenericException;
 import com.rest.menuforyou.repository.MenuRepository;
 import com.rest.menuforyou.repository.RestaurantRepository;
 import com.rest.menuforyou.repository.UserRepository;
+import come.rest.menuforyou.util.Utils;
 
 @Service
 public class RestaurantService {
@@ -35,50 +31,40 @@ public class RestaurantService {
 	private MenuRepository menuRepo;
 
 	@Transactional(readOnly = false)
-	public Long createRestaurant(Restaurant restaurant) {
-		try {
-			User user = restaurant.getUser();
+	public Restaurant createRestaurant(Restaurant restaurant) {
 
-			user.setAuthority("ADMIN");
+		User user = userRepo.findByUsername(Utils.getUsernameLogged());
+		Menu menu = menuRepo.findByUser(user).get(0);
+		restaurant.setMenu(menu);
+		restaurant.setLastTouched(new Date());
+		restaurant = restaurantRepo.save(restaurant);
 
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			String hashedPassword = passwordEncoder.encode(user.getPassword());
-			user.setPassword(hashedPassword);
-
-			userRepo.save(user);
-			Menu menu = restaurant.getMenu();
-			menuRepo.save(menu);
-			restaurantRepo.save(restaurant);
-
-		} catch (ConstraintViolationException e) {
-			System.err.println(e.getMessage());
-			throw new GenericException(Error.SQL, e.getMessage());
-		}
-		return restaurant.getId();
+		return restaurant;
 
 	}
 
 	@Transactional(readOnly = false)
-	public Long addRestaurant(Restaurant restaurant) {
-		try {
-			String username = getUsernameLogged();
-			User user = userRepo.findByUsername(username);
-			List<Restaurant> restaurants = restaurantRepo.findByUser(user);
-			restaurant.setUser(user);
-			restaurant.setMenu(restaurants.get(0).getMenu());
-			restaurantRepo.save(restaurant);
+	public Restaurant updateRestaurant(Restaurant restaurantInput) {
 
-		} catch (ConstraintViolationException e) {
-			System.err.println(e.getMessage());
-			throw new GenericException(Error.SQL, e.getMessage());
+		Restaurant restaurantDb = restaurantRepo.findOne(restaurantInput.getId());
+		Utils.checkPermission(restaurantDb);
+
+		if (StringUtils.isNotEmpty(restaurantInput.getName())) {
+			restaurantDb.setName(restaurantInput.getName());
 		}
-		return restaurant.getId();
-
+		if (StringUtils.isNotEmpty(restaurantInput.getAddress())) {
+			restaurantDb.setAddress(restaurantInput.getAddress());
+		}
+		if (StringUtils.isNotEmpty(restaurantInput.getImageUrl())) {
+			restaurantDb.setImageUrl(restaurantInput.getImageUrl());
+		}
+		restaurantDb.setLastTouched(new Date());
+		restaurantRepo.save(restaurantDb);
+		return restaurantDb;
 	}
 
 	@Transactional(readOnly = true)
 	public Iterable<Restaurant> listRestaurant() {
-		// List<Restaurant> restaurants = new ArrayList<Restaurant>();
 		Iterable<Restaurant> restaurants = restaurantRepo.findAll();
 		return restaurants;
 	}
@@ -87,15 +73,6 @@ public class RestaurantService {
 	public Restaurant getRestaurant(long idRestaurant) {
 		Restaurant restaurant = restaurantRepo.findOne(Long.valueOf(idRestaurant));
 		return restaurant;
-	}
-
-	private static String getUsernameLogged() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth == null) {
-			System.err.println("Problem with authentication");
-			return "maurizio01";
-		}
-		return auth.getName();
 	}
 
 }

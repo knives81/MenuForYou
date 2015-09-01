@@ -1,6 +1,7 @@
 package com.rest.menuforyou.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,11 +66,13 @@ public abstract class CommonService {
 	public void createNewEntity(long idMenu, EntityWithLanguage entityToCreate, EnumLanguage enumLanguage) {
 
 		Menu menu = menuRepo.findOne(idMenu);
-
-		entityToCreate.setUsername(Utils.getUsernameLogged());
+		Utils.checkPermission(menu);
 		entityToCreate.setMenu(menu);
+		entityToCreate.setLastTouched(new Date());
 		entityToCreate.setSequenceNumber(sequenceNumberRepo.save(new SequenceNumber()));
 		saveEntity(entityToCreate);
+
+		entityToCreate.mapCustomFields(enumLanguage);
 
 		Language<?> languageToCreate = makeLanguageEntity(enumLanguage, entityToCreate.getDescription(), entityToCreate);
 		saveLanguageEntity(languageToCreate);
@@ -82,7 +85,6 @@ public abstract class CommonService {
 		for (EntityWithLanguage entityInput : entitiesInput) {
 			EntityWithLanguage entityUpdated = updateExistingEntity(entityInput, enumLanguage);
 			entitiesWithLanguage.add(entityUpdated);
-
 		}
 		return entitiesWithLanguage;
 	}
@@ -90,11 +92,15 @@ public abstract class CommonService {
 	public EntityWithLanguage updateExistingEntity(EntityWithLanguage entityInput, EnumLanguage enumLanguage) {
 
 		EntityWithLanguage entityDb = entityRepo.findOne(entityInput.getId());
+		Utils.checkPermission(entityDb.getMenu());
+
 		mergeEntity(entityInput, entityDb);
 		boolean descriptionUpdated = updateLanguageDescription(enumLanguage, entityDb, entityInput);
 		if (!descriptionUpdated) {
 			addNewLanguageDescription(enumLanguage, entityDb, entityInput);
 		}
+		entityDb.mapCustomFields(enumLanguage);
+		mapCustomFieldsSubEntities(entityDb, enumLanguage);
 		return entityDb;
 	}
 

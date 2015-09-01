@@ -16,6 +16,7 @@ import com.rest.menuforyou.repository.UserRepository;
 
 @Component
 public class UserService implements UserDetailsService {
+
 	@Autowired
 	private UserRepository userRepo;
 
@@ -42,15 +43,4 @@ public class UserService implements UserDetailsService {
 		return userDetails;
 	}
 
-	// @Transactional(readOnly = false)
-	// public void saveUser(User user) {
-	//
-	// try {
-	// userRepo.save(user);
-	// } catch (ConstraintViolationException e) {
-	// System.err.println(e.getMessage() + " " + e.getErrorCode() + " " +
-	// e.getSQLState());
-	// throw new GenericException(Error.SQL, e.getMessage());
-	// }
-	// }
 }

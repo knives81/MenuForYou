@@ -60,7 +60,6 @@ public class IngredientControllerTest extends BaseTest {
 				andExpect(jsonPath("$[2].description").value("Eggs")).
 				andExpect(jsonPath("$[3].id").value(4)).
 				andExpect(jsonPath("$[3].description").value("Salt"));
-
 	}
 
 	@Test
@@ -77,18 +76,8 @@ public class IngredientControllerTest extends BaseTest {
 				.content(ingredientsJson))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(5))
-				.andExpect(jsonPath("$[0].description").value("Farina"));
-
-		// JsonOk jsonOk =
-		// mapper.readValue(result.getResponse().getContentAsString(),
-		// JsonOk.class);
-		// Long id = jsonOk.getIds().get(0);
-		//
-		// mockMvc.perform(get("/ingredients/" + id + "?language=IT"))
-		// .andExpect(status().isOk())
-		// .andExpect(jsonPath("$.id").value(id.intValue()))
-		// .andExpect(jsonPath("$.description").value("Farina"));
-
+				.andExpect(jsonPath("$[0].description").value("Farina"))
+				.andExpect(jsonPath("$[0].order").value(11));
 	}
 
 	@Test
@@ -106,8 +95,9 @@ public class IngredientControllerTest extends BaseTest {
 				.contentType(contentType)
 				.content(ingredientsJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.type").value("success"))
-				.andExpect(jsonPath("$.ids", hasSize(1)));
+				.andExpect(jsonPath("$[0].id").value(1))
+				.andExpect(jsonPath("$[0].description").value("Sugar Modified"))
+				.andExpect(jsonPath("$[0].order").value(7));
 	}
 
 	@Test

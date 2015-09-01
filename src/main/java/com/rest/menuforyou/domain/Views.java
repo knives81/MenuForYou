@@ -1,9 +1,15 @@
 package com.rest.menuforyou.domain;
 
 public class Views {
-	public static class ViewFromDish {}
-	public static class ViewFromTypedish {}
-	public static class ViewWithoutUser {}
-	public static class ViewWithUser {}
+	public interface ViewWithIngredient {
+	}
 
+	public interface ViewFromDish extends ViewWithIngredient {
+	}
+
+	public interface ViewFromTypedish extends ViewWithIngredient {
+	}
+
+	public static class ViewWithFeedback {
+	}
 }
