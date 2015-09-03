@@ -11,4 +11,6 @@ public interface ParameterRepo extends CrudRepository<Parameter, Long> {
 
 	List<Parameter> findByMenu(Menu menu);
 
+	List<Parameter> findByMenuId(Long idMenu);
+
 }

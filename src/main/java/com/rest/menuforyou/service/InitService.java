@@ -1,8 +1,11 @@
 package com.rest.menuforyou.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rest.menuforyou.domain.Menu;
 import com.rest.menuforyou.domain.Parameter;
 import com.rest.menuforyou.domain.User;
+import com.rest.menuforyou.error.ResourceNotFoundException;
 import com.rest.menuforyou.repository.MenuRepository;
 import com.rest.menuforyou.repository.ParameterRepo;
 import com.rest.menuforyou.repository.UserRepository;
-import come.rest.menuforyou.util.ParameterMap;
 
 @Service
 public class InitService {
@@ -38,22 +41,48 @@ public class InitService {
 		menu.setName(user.getUsername() + "_menu");
 		menu.setUser(user);
 		menuRepo.save(menu);
-		initParameters(menu);
+		saveInitParametersFromFile(menu);
 	}
 
-	private void initParameters(Menu menu) {
-		List<Parameter> parametersToSave = new ArrayList<Parameter>();
-		for (Map.Entry<String, String> entry : ParameterMap.initConfiguration.entrySet()) {
-			String name = entry.getKey();
-			String defaultValue = entry.getValue();
-			Parameter parameterToSave = new Parameter();
-			parameterToSave.setMenu(menu);
-			parameterToSave.setName(name);
-			parameterToSave.setValue(defaultValue);
-			parametersToSave.add(parameterToSave);
+	private void saveInitParametersFromFile(Menu menu) {
+
+		InputStream input = null;
+
+		try {
+
+			List<Parameter> parametersToSave = new ArrayList<Parameter>();
+			Properties prop = new Properties();
+
+			String filename = "parameters.properties";
+			input = InitService.class.getClassLoader().getResourceAsStream(filename);
+			if (input == null) {
+				throw new ResourceNotFoundException(filename + "not found");
+			}
+
+			prop.load(input);
+
+			Enumeration<?> e = prop.propertyNames();
+			while (e.hasMoreElements()) {
+				String name = (String) e.nextElement();
+				String defaultValue = prop.getProperty(name);
+				Parameter parameterToSave = new Parameter();
+				parameterToSave.setMenu(menu);
+				parameterToSave.setName(name);
+				parameterToSave.setValue(defaultValue);
+				parametersToSave.add(parameterToSave);
+			}
+			parameterRepo.save(parametersToSave);
+
+		} catch (IOException ex) {
+			throw new ResourceNotFoundException("Problem with the file", ex);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					throw new ResourceNotFoundException("Problem with the file", e);
+				}
+			}
 		}
-		parameterRepo.save(parametersToSave);
-
 	}
-
 }

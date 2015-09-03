@@ -22,6 +22,7 @@ import com.rest.menuforyou.error.ResourceNotFoundException;
 import com.rest.menuforyou.error.SaveException;
 import com.rest.menuforyou.response.JsonOk;
 import com.rest.menuforyou.service.TypedishService;
+import come.rest.menuforyou.util.MenuIdentityMap;
 
 @RestController
 public class TypedishController {
@@ -34,7 +35,9 @@ public class TypedishController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<Typedish> saveTypedish(@PathVariable long id, @RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
 		try {
-			return (List<Typedish>) typedishService.createEntities(id, entities, language);
+			List<Typedish> typedishes = (List<Typedish>) typedishService.createEntities(id, entities, language);
+			MenuIdentityMap.getInstance().flagToBeUpdated(id);
+			return typedishes;
 		} catch (Exception e) {
 			throw new SaveException("Exception Typedish save", e);
 		}
@@ -44,7 +47,9 @@ public class TypedishController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<Typedish> updateDishes(@RequestBody List<Typedish> entities, @RequestParam("language") EnumLanguage language) {
 		try {
-			return (List<Typedish>) typedishService.updateEntities(entities, language);
+			List<Typedish> typedishes = (List<Typedish>) typedishService.updateEntities(entities, language);
+			MenuIdentityMap.getInstance().flagToBeUpdated(typedishes.get(0).getMenu().getId());
+			return typedishes;
 		} catch (Exception e) {
 			throw new SaveException("Exception Typedish save", e);
 		}
@@ -53,7 +58,11 @@ public class TypedishController {
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.GET)
 	public String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
 		try {
-			List<Typedish> typedishes = (List<Typedish>) typedishService.listEntities(id, language);
+			List<Typedish> typedishes = MenuIdentityMap.getInstance().getMenu(id, language);
+			if (typedishes == null) {
+				typedishes = (List<Typedish>) typedishService.listEntities(id, language);
+				MenuIdentityMap.getInstance().putMenu(id, language, typedishes);
+			}
 			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
 			return objectWriter.writeValueAsString(typedishes);
 		} catch (Exception e) {
@@ -77,7 +86,8 @@ public class TypedishController {
 	@RequestMapping(value = "/typedishes/{id}", method = RequestMethod.DELETE)
 	public JsonOk deleteTypedish(@PathVariable long id) throws Exception {
 		try {
-			typedishService.deleteEntity(id);
+			Long idMenu = typedishService.deleteEntity(id);
+			MenuIdentityMap.getInstance().flagToBeUpdated(idMenu);
 			return new JsonOk();
 		} catch (Exception e) {
 			throw new DeleteException("Exception Typedish delete", e);

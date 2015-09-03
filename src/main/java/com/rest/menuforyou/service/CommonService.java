@@ -178,9 +178,11 @@ public abstract class CommonService {
 	}
 
 	@Transactional(readOnly = false)
-	public void deleteEntity(long id) {
+	public Long deleteEntity(long id) {
 		initialize();
+		EntityWithLanguage entity = entityRepo.findOne(Long.valueOf(id));
 		entityRepo.delete(Long.valueOf(id));
+		return entity.getMenu().getId();
 	}
 
 }
