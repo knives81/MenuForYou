@@ -14,6 +14,9 @@ public class KeyMenuInMemory {
 	public Long getIdMenu() {
 		return idMenu;
 	}
+	public EnumLanguage getLanguage() {
+		return language;
+	}
 
 	@Override
 	public int hashCode() {

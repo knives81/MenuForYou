@@ -2,6 +2,7 @@ package come.rest.menuforyou.util;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ public class ConfigurationIdentityMap {
 
 	private static final Long ROOT_MENU_ID = 1L;
 
-	private HashMap<Long, ConfigurationInMemory> configurationMap = new HashMap<Long, ConfigurationInMemory>();
+	private ConcurrentHashMap<Long, ConfigurationInMemory> configurationMap = new ConcurrentHashMap<Long, ConfigurationInMemory>();
 
 	private static class Holder {
 		static final ConfigurationIdentityMap INSTANCE = new ConfigurationIdentityMap();
@@ -32,10 +33,10 @@ public class ConfigurationIdentityMap {
 
 	public ConfigurationInMemory getConfigurationInMemory(Long idMenu) {
 		// it is null only the first time the configuration is requested
-		if (configurationMap.get(ROOT_MENU_ID) == null) {
+		if (!configurationMap.containsKey(ROOT_MENU_ID)) {
 			loadParametersInMemory(ROOT_MENU_ID);
 		}
-		if (configurationMap.get(idMenu) == null) {
+		if (!configurationMap.containsKey(idMenu)) {
 			loadParametersInMemory(idMenu);
 		}
 		ConfigurationInMemory rootConf = configurationMap.get(ROOT_MENU_ID);
@@ -46,10 +47,11 @@ public class ConfigurationIdentityMap {
 
 	// Only entry point to write the ConfigurationInMemory
 	@Transactional(readOnly = true)
-	public synchronized void loadParametersInMemory(Long idMenu) {
+	public void loadParametersInMemory(Long idMenu) {
 		List<Parameter> parametersDb = parameterRepo.findByMenuId(idMenu);
 		ConfigurationInMemory conf = new ConfigurationInMemory(parametersDb);
 		configurationMap.put(idMenu, conf);
+		
 	}
 
 }

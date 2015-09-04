@@ -3,14 +3,15 @@ package come.rest.menuforyou.util;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.rest.menuforyou.domain.EnumLanguage;
 import com.rest.menuforyou.domain.Typedish;
 
 public class MenuIdentityMap {
 
-	private static HashMap<KeyMenuInMemory, MenuInMemory> menuMap = new HashMap<KeyMenuInMemory, MenuInMemory>();
-	private static HashSet<Long> menuToBeUpdated = new HashSet<Long>();
+	private static ConcurrentHashMap<KeyMenuInMemory, MenuInMemory> menuMap = new ConcurrentHashMap<KeyMenuInMemory, MenuInMemory>();
+	private static ConcurrentHashMap<KeyMenuInMemory, Boolean> menuToBeUpdated = new ConcurrentHashMap<KeyMenuInMemory, Boolean>();
 
 	private static class Holder {
 		static final MenuIdentityMap INSTANCE = new MenuIdentityMap();
@@ -20,16 +21,29 @@ public class MenuIdentityMap {
 		return Holder.INSTANCE;
 	}
 
-	public synchronized void flagToBeUpdated(Long idMenu) {
-		menuToBeUpdated.add(idMenu);
+	public void flagToBeUpdated(Long idMenu) {
+		for (EnumLanguage language : EnumLanguage.values()) {
+			KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);
+			if (menuMap.containsKey(key)) {
+				menuToBeUpdated.put(key, true);
+			}
+		}
 	}
 
-	public synchronized boolean needToReload(Long idMenu) {
-		if (menuToBeUpdated.contains(idMenu)) {
-			menuToBeUpdated.remove(idMenu);
-			return true;
+	public void flagUpdated(Long idMenu, EnumLanguage language) {
+		KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);
+		menuToBeUpdated.put(key, false);
+
+	}
+
+	public Boolean needToReload(Long idMenu, EnumLanguage language) {
+		KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);
+		if (null == menuToBeUpdated.get(key)) {
+			return false;
 		}
-		return false;
+		else {
+			return menuToBeUpdated.get(key);
+		}
 	}
 
 	public void putMenu(Long idMenu, EnumLanguage language, List<Typedish> typedishes) {
@@ -39,6 +53,6 @@ public class MenuIdentityMap {
 	}
 
 	public List<Typedish> getMenu(Long idMenu, EnumLanguage language) {
-		return (menuMap.get(new KeyMenuInMemory(idMenu, language))).getTypedishes();
+		return menuMap.get(new KeyMenuInMemory(idMenu, language)).getTypedishes();
 	}
 }
