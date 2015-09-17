@@ -1,4 +1,4 @@
-package come.rest.menuforyou.util;
+package com.rest.menuforyou.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

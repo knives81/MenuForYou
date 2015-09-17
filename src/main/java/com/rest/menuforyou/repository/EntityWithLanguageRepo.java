@@ -1,5 +1,6 @@
 package com.rest.menuforyou.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -12,5 +13,7 @@ public interface EntityWithLanguageRepo<T> extends PagingAndSortingRepository<T,
 	List<T> findByMenuId(Long id);
 
 	List<T> findByMenuId(Long id, Sort sort);
+
+	List<T> findByMenuIdIn(Collection<Long> ids, Sort sort);
 
 }

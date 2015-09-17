@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,6 +30,7 @@ import com.rest.menuforyou.domain.Ingredient;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
 @WebAppConfiguration
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IngredientControllerTest extends BaseTest {
 
 	@Before
@@ -38,77 +41,89 @@ public class IngredientControllerTest extends BaseTest {
 	}
 
 	@Test
-	public void testGetOneIngredient() throws Exception {
+	public void test1GetOneIngredient() throws Exception {
 
-		mockMvc.perform(get("/ingredients/1?language=IT")).
+		int ingredientId = 2000;
+		String ingredientDesc = "Burro";
+
+		mockMvc.perform(get("/ingredients/" + ingredientId + TestConst.IT)).
 				andExpect(status().isOk()).
-				andExpect(jsonPath("$.id").value(1)).
-				andExpect(jsonPath("$.description").value("Burro"));
+				andExpect(jsonPath("$.id").value(ingredientId)).
+				andExpect(jsonPath("$.description").value(ingredientDesc));
 	}
 
 	@Test
-	public void testGetListIngredients() throws Exception {
+	public void test2GetListIngredients() throws Exception {
 
-		mockMvc.perform(get("/menus/1/ingredients?language=EN")).
-				andExpect(status().isOk()).
-				andExpect(jsonPath("$", hasSize(4))).
-				andExpect(jsonPath("$[0].id").value(1)).
-				andExpect(jsonPath("$[0].description").value("Butter")).
-				andExpect(jsonPath("$[1].id").value(2)).
-				andExpect(jsonPath("$[1].description").value("Sugar")).
-				andExpect(jsonPath("$[2].id").value(3)).
-				andExpect(jsonPath("$[2].description").value("Eggs")).
-				andExpect(jsonPath("$[3].id").value(4)).
-				andExpect(jsonPath("$[3].description").value("Salt"));
+		mockMvc.perform(get("/menus/" + TestConst.MENU_ID + "/ingredients" + TestConst.EN))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(6)))
+				.andExpect(jsonPath("$[0].id").value(1))
+				.andExpect(jsonPath("$[0].description").value("Common Ingredient"))
+				.andExpect(jsonPath("$[1].id").value(2))
+				.andExpect(jsonPath("$[1].description").value("Common Ingredient 2"))
+				.andExpect(jsonPath("$[2].id").value(2000))
+				.andExpect(jsonPath("$[2].description").value("Butter"))
+				.andExpect(jsonPath("$[3].id").value(2001))
+				.andExpect(jsonPath("$[3].description").value("Sugar"))
+				.andExpect(jsonPath("$[4].id").value(2002))
+				.andExpect(jsonPath("$[4].description").value("Eggs"))
+				.andExpect(jsonPath("$[5].id").value(2003))
+				.andExpect(jsonPath("$[5].description").value("Salt"));
 	}
 
 	@Test
-	public void testCreateIngredient() throws Exception {
+	public void test3CreateIngredient() throws Exception {
+
+		int ingredientId = 2004;
+		String ingredientDesc = "Farina";
 
 		List<Ingredient> ingredients = Arrays.asList(
 				IngredientBuilder.ingredient().
-						withDesc("Farina").
+						withDesc(ingredientDesc).
 						build());
 		String ingredientsJson = json(ingredients);
-		mockMvc.perform(post("/menus/1/ingredients/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		mockMvc.perform(post("/menus/" + TestConst.MENU_ID + "/ingredients/" + TestConst.IT)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(ingredientsJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(5))
-				.andExpect(jsonPath("$[0].description").value("Farina"))
-				.andExpect(jsonPath("$[0].order").value(11));
+				.andExpect(jsonPath("$[0].id").value(ingredientId))
+				.andExpect(jsonPath("$[0].description").value(ingredientDesc))
+				.andExpect(jsonPath("$[0].order").value(13));
 	}
 
 	@Test
-	public void testUpdateIngredient() throws Exception {
+	public void test4DeleteIngredient() throws Exception {
+
+		int ingredientId = 2002;
+
+		mockMvc.perform(delete("/ingredients/" + ingredientId)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE)))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void test5UpdateIngredient() throws Exception {
+
+		int ingredientId = 2003;
+		String ingredientDesc = "Sugar Modified";
 
 		List<Ingredient> ingredients = Arrays.asList(
 				IngredientBuilder.ingredient()
-						.withId(1)
-						.withDesc("Sugar Modified")
+						.withId(ingredientId)
+						.withDesc(ingredientDesc)
 						.build());
 
 		String ingredientsJson = json(ingredients);
-		this.mockMvc.perform(put("/ingredients/?language=EN")
-				.with(user("maurizio01").roles("ADMIN"))
+		this.mockMvc.perform(put("/ingredients/" + TestConst.EN)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(ingredientsJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(1))
-				.andExpect(jsonPath("$[0].description").value("Sugar Modified"))
-				.andExpect(jsonPath("$[0].order").value(7));
-	}
-
-	@Test
-	public void testDeleteIngredient() throws Exception {
-
-		mockMvc.perform(delete("/ingredients/1")
-				.with(user("maurizio01").roles("ADMIN")))
-				.andExpect(status().isOk());
-
-		// TODO test get id deleted
-
+				.andExpect(jsonPath("$[0].id").value(ingredientId))
+				.andExpect(jsonPath("$[0].description").value(ingredientDesc))
+				.andExpect(jsonPath("$[0].order").value(12));
 	}
 
 }

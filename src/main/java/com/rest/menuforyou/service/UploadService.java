@@ -16,7 +16,7 @@ import com.rest.menuforyou.domain.Restaurant;
 import com.rest.menuforyou.error.SaveException;
 import com.rest.menuforyou.repository.DishRepository;
 import com.rest.menuforyou.repository.RestaurantRepository;
-import come.rest.menuforyou.util.Utils;
+import com.rest.menuforyou.util.Utils;
 
 @Service
 public class UploadService {

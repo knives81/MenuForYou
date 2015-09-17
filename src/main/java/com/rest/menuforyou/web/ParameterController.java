@@ -1,5 +1,7 @@
 package com.rest.menuforyou.web;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,8 +15,6 @@ import com.rest.menuforyou.domain.Parameter;
 import com.rest.menuforyou.error.SaveException;
 import com.rest.menuforyou.response.JsonOk;
 import com.rest.menuforyou.service.ParameterService;
-import come.rest.menuforyou.util.ConfigurationIdentityMap;
-import come.rest.menuforyou.util.ConfigurationInMemory;
 
 @RestController
 public class ParameterController {
@@ -27,7 +27,6 @@ public class ParameterController {
 	public JsonOk updateParameter(@PathVariable long id, @RequestBody Parameter parameter) {
 		try {
 			parameterService.updateParameter(id, parameter);
-			ConfigurationIdentityMap.getInstance().loadParametersInMemory(id);
 			return new JsonOk();
 		} catch (Exception e) {
 			throw new SaveException("Exception Parameter update", e);
@@ -37,8 +36,7 @@ public class ParameterController {
 	@RequestMapping(value = "/menus/{id}/parameters/forcereload", method = RequestMethod.GET)
 	public JsonOk forceReloadParameters(@PathVariable long id) {
 		try {
-			parameterService.checkPermission(id);
-			ConfigurationIdentityMap.getInstance().loadParametersInMemory(id);
+			parameterService.forceReload(id);
 			return new JsonOk();
 
 		} catch (Exception e) {
@@ -47,9 +45,9 @@ public class ParameterController {
 	}
 
 	@RequestMapping(value = "/menus/{id}/parameters", method = RequestMethod.GET)
-	public ConfigurationInMemory getParameters(@PathVariable long id) {
+	public HashMap<String, String> getParameters(@PathVariable long id) {
 		try {
-			return parameterService.getParameters(id);
+			return parameterService.getConfigurationInMemory(id).getParametersInMemory();
 		} catch (Exception e) {
 			throw new SaveException("Exception Parameter get", e);
 		}

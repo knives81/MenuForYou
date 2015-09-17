@@ -1,4 +1,4 @@
-package come.rest.menuforyou.util;
+package com.rest.menuforyou.util;
 
 import com.rest.menuforyou.domain.EnumLanguage;
 

@@ -1,4 +1,4 @@
-package come.rest.menuforyou.util;
+package com.rest.menuforyou.util;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -36,6 +36,10 @@ public class ConfigurationInMemory implements Serializable {
 			merged.parametersInMemory.put(entry.getKey(), entry.getValue());
 		}
 		return merged;
+	}
+
+	public HashMap<String, String> getParametersInMemory() {
+		return parametersInMemory;
 	}
 
 }

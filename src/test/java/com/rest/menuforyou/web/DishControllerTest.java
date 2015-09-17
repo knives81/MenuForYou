@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -30,6 +32,7 @@ import com.rest.menuforyou.domain.Dish;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
 @WebAppConfiguration
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DishControllerTest extends BaseTest {
 
 	@Before
@@ -40,140 +43,161 @@ public class DishControllerTest extends BaseTest {
 	}
 
 	@Test
-	public void testGetOneDish() throws Exception {
+	public void test1GetOneDish() throws Exception {
 
-		mockMvc.perform(get("/dishes/1?language=IT")).
-				andExpect(status().isOk()).
-				andExpect(jsonPath("$.id").value(1)).
-				andExpect(jsonPath("$.description").value("Lasagna al sugo")).
-				andExpect(jsonPath("$.price").value(15.0)).
-				andExpect(jsonPath("$.typedish.id").value(1)).
-				andExpect(jsonPath("$.typedish.description").value("Pasta IT")).
-				andExpect(jsonPath("$.ingredients", hasSize(2)));
+		int dishId = 4000;
+		int typedishId = 3000;
+
+		mockMvc.perform(get("/dishes/" + dishId + TestConst.IT))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(dishId))
+				.andExpect(jsonPath("$.description").value("Lasagna al sugo"))
+				.andExpect(jsonPath("$.price").value(15.0))
+				.andExpect(jsonPath("$.typedish.id").value(typedishId))
+				.andExpect(jsonPath("$.typedish.description").value("Pasta IT"))
+				.andExpect(jsonPath("$.ingredients", hasSize(2)));
 	}
 
 	@Test
-	public void testGetListDishes() throws Exception {
+	public void test2GetListDishes() throws Exception {
 
-		mockMvc.perform(get("/menus/1/dishes?language=IT")).
+		mockMvc.perform(get("/menus/" + TestConst.MENU_ID + "/dishes" + TestConst.IT)).
 				andExpect(status().isOk()).
 				andExpect(jsonPath("$", hasSize(3))).
-				andExpect(jsonPath("$[0].id").value(1)).
+				andExpect(jsonPath("$[0].id").value(4000)).
 				andExpect(jsonPath("$[0].description").value("Lasagna al sugo")).
 				andExpect(jsonPath("$[0].ingredients", hasSize(2))).
-				andExpect(jsonPath("$[1].id").value(2)).
+				andExpect(jsonPath("$[1].id").value(4001)).
 				andExpect(jsonPath("$[1].description").value("Panna Cotta alle fragole")).
 				andExpect(jsonPath("$[1].ingredients", hasSize(0))).
-				andExpect(jsonPath("$[2].id").value(3)).
+				andExpect(jsonPath("$[2].id").value(4002)).
 				andExpect(jsonPath("$[2].description").value("Bistecca")).
 				andExpect(jsonPath("$[2].ingredients", hasSize(1)));
 
 	}
 
 	@Test
-	public void testCreateDishes() throws Exception {
+	public void test3CreateDishes() throws Exception {
+
+		int dishId = 4003;
+		String dishDesc = "Lasagna con pomodoro e mozzarella";
 
 		List<Dish> dishes = Arrays.asList(
 				DishBuilder.dish().
-						withDesc("Lasagna con pomodoro e mozzarella").
+						withDesc(dishDesc).
 						withName("Lasagna").
 						withPrice("10.5").
 						withTypedish(
 								TypedishBuilder.typedish().
-										withId(1).
+										withId(3000).
 										build()).
 						addIngredient(
 								IngredientBuilder.ingredient().
-										withId(1).
+										withId(2000).
 										build()).
 						build());
 
 		String dishesJson = json(dishes);
-		mockMvc.perform(post("/menus/1/dishes/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		mockMvc.perform(post("/menus/" + TestConst.MENU_ID + "/dishes/" + TestConst.IT)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(dishesJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(4))
-				.andExpect(jsonPath("$[0].description").value("Lasagna con pomodoro e mozzarella"))
-				.andExpect(jsonPath("$[0].order").value(11));
+				.andExpect(jsonPath("$[0].id").value(dishId))
+				.andExpect(jsonPath("$[0].description").value(dishDesc))
+				.andExpect(jsonPath("$[0].order").value(13));
 
 	}
 
 	@Test
-	public void testUpdateDishes() throws Exception {
+	public void test4UpdateDishes() throws Exception {
+
+		int dishId = 4000;
+		int order = 1;
+		String price = "11.5";
 
 		List<Dish> dishes = Arrays.asList(
 				DishBuilder.dish().
-						withId(1).
-						withPrice("11.5").
-						withOrder(1).
+						withId(dishId).
+						withPrice(price).
+						withOrder(order).
 						withTypedish(
 								TypedishBuilder.typedish().
-										withId(1).
+										withId(3000).
 										build()).
 						addIngredient(
 								IngredientBuilder.ingredient().
-										withId(2).
+										withId(2001).
 										build()).
 						addIngredient(
 								IngredientBuilder.ingredient().
-										withId(1).
+										withId(2000).
 										build()).
 						build());
 
 		String dishesJson = json(dishes);
-		this.mockMvc.perform(put("/dishes/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		this.mockMvc.perform(put("/dishes/" + TestConst.IT)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(dishesJson))
-				.andExpect(jsonPath("$[0].id").value(1))
-				.andExpect(jsonPath("$[0].order").value(1))
-				.andExpect(jsonPath("$[0].price").value(Double.valueOf("11.5")));
+				.andExpect(jsonPath("$[0].id").value(dishId))
+				.andExpect(jsonPath("$[0].order").value(order))
+				.andExpect(jsonPath("$[0].price").value(Double.valueOf(price)));
 	}
 
 	@Test
-	public void testUpdate2Dishes() throws Exception {
+	public void test5Update2Dishes() throws Exception {
+
+		int dishId = 4000;
+		String dishDesc = "Gnocco Language Modified";
+		String dishName = "Gnocco Modified";
+		int ingredientId1 = 1;
+		int ingredientId2 = 2;
+		int typedishId = 3002;
+		int order = 1;
+
 		List<Dish> dishes = Arrays.asList(
 				DishBuilder.dish().
-						withId(1).
-						withName("Gnocco Modified").
-						withDesc("Gnocco Language Modified").
-						withOrder(1).
+						withId(dishId).
+						withName(dishName).
+						withDesc(dishDesc).
+						withOrder(order).
 						withTypedish(
 								TypedishBuilder.typedish().
-										withId(2).
+										withId(typedishId).
 										build()).
 						addIngredient(
 								IngredientBuilder.ingredient().
-										withId(3).
+										withId(ingredientId1).
 										build()).
 						addIngredient(
 								IngredientBuilder.ingredient().
-										withId(4).
+										withId(ingredientId2).
 										build()).
 						build());
 
 		String dishesJson = json(dishes);
-		mockMvc.perform(put("/dishes/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		mockMvc.perform(put("/dishes/" + TestConst.EN)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(dishesJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(1))
-				.andExpect(jsonPath("$[0].order").value(1))
-				.andExpect(jsonPath("$[0].description").value("Gnocco Language Modified"))
-				.andExpect(jsonPath("$[0].typedish.id").value(2))
-				.andExpect(jsonPath("$[0].ingredients[0].id").value(4))
-				.andExpect(jsonPath("$[0].ingredients[1].id").value(3));
+				.andExpect(jsonPath("$[0].id").value(dishId))
+				.andExpect(jsonPath("$[0].order").value(order))
+				.andExpect(jsonPath("$[0].description").value(dishDesc))
+				.andExpect(jsonPath("$[0].typedish.id").value(typedishId))
+				.andExpect(jsonPath("$[0].ingredients[0].id").value(ingredientId1))
+				.andExpect(jsonPath("$[0].ingredients[1].id").value(ingredientId2));
 
 	}
 
 	@Test
-	public void testDeleteDish() throws Exception {
+	public void test6DeleteDish() throws Exception {
 
-		mockMvc.perform(delete("/dishes/1")
-				.with(user("maurizio01").roles("ADMIN")))
+		int dishId = 4001;
+
+		mockMvc.perform(delete("/dishes/" + dishId)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE)))
 				.andExpect(status().isOk());
 	}
 }

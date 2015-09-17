@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,6 +30,7 @@ import com.rest.menuforyou.domain.Typedish;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
 @WebAppConfiguration
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TypedishControllerTest extends BaseTest {
 
 	@Before
@@ -38,77 +41,89 @@ public class TypedishControllerTest extends BaseTest {
 	}
 
 	@Test
-	public void testGetOneTypedish() throws Exception {
+	public void test1GetOneTypedish() throws Exception {
 
-		mockMvc.perform(get("/typedishes/1?language=EN")).
+		int typedishId = 3000;
+		int dishId = 4000;
+		String typedishDesc = "Pasta EN";
+
+		mockMvc.perform(get("/typedishes/" + typedishId + TestConst.EN)).
 				andExpect(status().isOk()).
-				andExpect(jsonPath("$.id").value(1)).
-				andExpect(jsonPath("$.description").value("Pasta EN")).
-				andExpect(jsonPath("$..dishes[0].id").value(1));
+				andExpect(jsonPath("$.id").value(typedishId)).
+				andExpect(jsonPath("$.description").value(typedishDesc)).
+				andExpect(jsonPath("$..dishes[0].id").value(dishId));
 	}
 
 	@Test
-	public void testGetListTypedishes() throws Exception {
+	public void test2GetListTypedishes() throws Exception {
 
-		mockMvc.perform(get("/menus/1/typedishes?language=IT")).
+		mockMvc.perform(get("/menus/" + TestConst.MENU_ID + "/typedishes" + TestConst.IT)).
 				andExpect(status().isOk()).
 				andExpect(jsonPath("$", hasSize(3))).
-				andExpect(jsonPath("$[0].id").value(1)).
+				andExpect(jsonPath("$[0].id").value(3000)).
 				andExpect(jsonPath("$[0].description").value("Pasta IT")).
-				andExpect(jsonPath("$[1].id").value(2)).
+				andExpect(jsonPath("$[1].id").value(3001)).
 				andExpect(jsonPath("$[1].description").value("Dolci IT")).
-				andExpect(jsonPath("$[2].id").value(3)).
+				andExpect(jsonPath("$[2].id").value(3002)).
 				andExpect(jsonPath("$[2].description").value("Antipasto IT"));
 
 	}
 
 	@Test
-	public void testCreateTypedishes() throws Exception {
+	public void test3CreateTypedishes() throws Exception {
+
+		int typedishId = 3003;
+		String typedishDesc = "PizzaWrong";
 
 		List<Typedish> typedishes = Arrays.asList(
 				TypedishBuilder.typedish().
-						withDesc("PizzaWrong").
+						withDesc(typedishDesc).
 						build());
 
 		String typedishesJson = json(typedishes);
-		mockMvc.perform(post("/menus/1/typedishes/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		mockMvc.perform(post("/menus/" + TestConst.MENU_ID + "/typedishes/" + TestConst.IT)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(typedishesJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(4))
-				.andExpect(jsonPath("$[0].description").value("PizzaWrong"))
-				.andExpect(jsonPath("$[0].order").value(11));
+				.andExpect(jsonPath("$[0].id").value(typedishId))
+				.andExpect(jsonPath("$[0].description").value(typedishDesc))
+				.andExpect(jsonPath("$[0].order").value(13));
 
 	}
 
 	@Test
-	public void testUpdateTypedishes() throws Exception {
+	public void test4UpdateTypedishes() throws Exception {
+
+		int typedishId = 3001;
+		String typedishDesc = "Appetizer EN Modified";
 
 		List<Typedish> typedishes = Arrays.asList(
 				TypedishBuilder.typedish().
-						withId(3).
-						withDesc("Appetizer EN Modified").
+						withId(typedishId).
+						withDesc(typedishDesc).
 						build());
 
 		String typedishesJson = json(typedishes);
 
-		mockMvc.perform(put("/typedishes/?language=IT")
-				.with(user("maurizio01").roles("ADMIN"))
+		mockMvc.perform(put("/typedishes/" + TestConst.EN)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE))
 				.contentType(contentType)
 				.content(typedishesJson))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$[0].id").value(3))
-				.andExpect(jsonPath("$[0].description").value("Appetizer EN Modified"))
-				.andExpect(jsonPath("$[0].order").value(3));
+				.andExpect(jsonPath("$[0].id").value(typedishId))
+				.andExpect(jsonPath("$[0].description").value(typedishDesc))
+				.andExpect(jsonPath("$[0].order").value(4));
 
 	}
 
 	@Test
-	public void testDeleteTypedish() throws Exception {
+	public void test5DeleteTypedish() throws Exception {
 
-		mockMvc.perform(delete("/typedishes/3")
-				.with(user("maurizio01").roles("ADMIN")))
+		int typedishId = 3002;
+
+		mockMvc.perform(delete("/typedishes/" + typedishId)
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE)))
 				.andExpect(status().isOk());
 		// TODO test get id deleted
 	}

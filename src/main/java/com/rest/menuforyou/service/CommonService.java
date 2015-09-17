@@ -1,5 +1,7 @@
 package com.rest.menuforyou.service;
 
+import static com.rest.menuforyou.util.Const.ROOT_MENU_ID;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +21,7 @@ import com.rest.menuforyou.repository.EntityWithLanguageRepo;
 import com.rest.menuforyou.repository.LanguageRepo;
 import com.rest.menuforyou.repository.MenuRepository;
 import com.rest.menuforyou.repository.SequenceNumberRepo;
-import come.rest.menuforyou.util.Utils;
+import com.rest.menuforyou.util.Utils;
 
 public abstract class CommonService {
 
@@ -160,7 +162,15 @@ public abstract class CommonService {
 
 		initialize();
 		Sort sort = new Sort(Direction.ASC, "sequenceNumber");
-		List<? extends EntityWithLanguage> entities = (List<? extends EntityWithLanguage>) entityRepo.findByMenuId(id, sort);
+		// List<? extends EntityWithLanguage> entities = (List<? extends
+		// EntityWithLanguage>) entityRepo.findByMenuId(id, sort);
+		// List<? extends EntityWithLanguage> commonEntities = (List<? extends
+		// EntityWithLanguage>) entityRepo.findByMenuId(ROOT_MENU_ID, sort);
+		List<Long> ids = new ArrayList<Long>();
+		ids.add(id);
+		ids.add(ROOT_MENU_ID);
+		List<? extends EntityWithLanguage> entities = (List<? extends EntityWithLanguage>) entityRepo.findByMenuIdIn(ids, sort);
+
 		for (EntityWithLanguage entity : entities) {
 			entity.mapCustomFields(language);
 			mapCustomFieldsSubEntities(entity, language);
@@ -180,9 +190,10 @@ public abstract class CommonService {
 	@Transactional(readOnly = false)
 	public Long deleteEntity(long id) {
 		initialize();
-		EntityWithLanguage entity = entityRepo.findOne(Long.valueOf(id));
+		EntityWithLanguage entityDb = entityRepo.findOne(Long.valueOf(id));
+		Utils.checkPermission(entityDb.getMenu());
 		entityRepo.delete(Long.valueOf(id));
-		return entity.getMenu().getId();
+		return entityDb.getMenu().getId();
 	}
 
 }

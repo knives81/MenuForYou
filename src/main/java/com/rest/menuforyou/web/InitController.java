@@ -13,7 +13,7 @@ import com.rest.menuforyou.response.JsonOk;
 import com.rest.menuforyou.service.InitService;
 
 @RestController
-public class UserController {
+public class InitController {
 
 	@Autowired
 	private InitService userCreationService;

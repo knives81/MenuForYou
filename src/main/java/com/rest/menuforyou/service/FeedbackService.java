@@ -14,7 +14,7 @@ import com.rest.menuforyou.domain.Menu;
 import com.rest.menuforyou.repository.DishRepository;
 import com.rest.menuforyou.repository.FeedbackRepo;
 import com.rest.menuforyou.repository.MenuRepository;
-import come.rest.menuforyou.util.Utils;
+import com.rest.menuforyou.util.Utils;
 
 @Service
 public class FeedbackService {

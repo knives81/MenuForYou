@@ -1,7 +1,5 @@
-package come.rest.menuforyou.util;
+package com.rest.menuforyou.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,6 +51,12 @@ public class MenuIdentityMap {
 	}
 
 	public List<Typedish> getMenu(Long idMenu, EnumLanguage language) {
-		return menuMap.get(new KeyMenuInMemory(idMenu, language)).getTypedishes();
+		MenuInMemory menuInMemory = menuMap.get(new KeyMenuInMemory(idMenu, language));
+		if (null != menuInMemory) {
+			return menuInMemory.getTypedishes();
+		}
+		else {
+			return null;
+		}
 	}
 }

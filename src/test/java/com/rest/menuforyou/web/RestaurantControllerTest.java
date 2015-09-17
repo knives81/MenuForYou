@@ -9,8 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -24,6 +26,7 @@ import com.rest.menuforyou.domain.Restaurant;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
 @WebAppConfiguration
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RestaurantControllerTest extends BaseTest {
 
 	@Before
@@ -33,7 +36,25 @@ public class RestaurantControllerTest extends BaseTest {
 	}
 
 	@Test
-	public void testCreateRestaurant() throws Exception {
+	public void test1GetAllRestaurants() throws Exception {
+
+		mockMvc.perform(get("/restaurants")).
+				andExpect(status().isOk()).
+				andExpect(jsonPath("$", hasSize(1)));
+	}
+
+	@Test
+	public void test2GetOneRestaurants() throws Exception {
+
+		mockMvc.perform(get("/restaurants/1"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Restaurant01"))
+				.andExpect(jsonPath("$.address").value("viale trastevere"))
+				.andExpect(jsonPath("$.menu.name").value("menu01"));
+	}
+
+	@Test
+	public void test3CreateRestaurant() throws Exception {
 
 		Restaurant restaurant = RestaurantBuilder.restaurant()
 				.withName("Ristorante02")
@@ -52,7 +73,7 @@ public class RestaurantControllerTest extends BaseTest {
 	}
 
 	@Test
-	public void testUpdateRestaurant() throws Exception {
+	public void test4UpdateRestaurant() throws Exception {
 
 		Restaurant restaurant = RestaurantBuilder.restaurant()
 				.withId(1)
@@ -74,24 +95,6 @@ public class RestaurantControllerTest extends BaseTest {
 				.andReturn();
 
 		System.out.println(result.getResponse().getContentAsString());
-	}
-
-	@Test
-	public void testGetAllRestaurants() throws Exception {
-
-		mockMvc.perform(get("/restaurants")).
-				andExpect(status().isOk()).
-				andExpect(jsonPath("$", hasSize(1)));
-	}
-
-	@Test
-	public void testGetOneRestaurants() throws Exception {
-
-		mockMvc.perform(get("/restaurants/1"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("Restaurant01"))
-				.andExpect(jsonPath("$.address").value("viale trastevere"))
-				.andExpect(jsonPath("$.menu.name").value("menu01"));
 	}
 
 }

@@ -18,7 +18,7 @@ import com.rest.menuforyou.domain.User;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)
 @WebAppConfiguration
-public class UserCreationControllerTest extends BaseTest {
+public class InitControllerTest extends BaseTest {
 
 	@Before
 	public void setup() throws Exception {

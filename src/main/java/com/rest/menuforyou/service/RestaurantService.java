@@ -13,7 +13,7 @@ import com.rest.menuforyou.domain.User;
 import com.rest.menuforyou.repository.MenuRepository;
 import com.rest.menuforyou.repository.RestaurantRepository;
 import com.rest.menuforyou.repository.UserRepository;
-import come.rest.menuforyou.util.Utils;
+import com.rest.menuforyou.util.Utils;
 
 @Service
 public class RestaurantService {
