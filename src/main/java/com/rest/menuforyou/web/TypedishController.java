@@ -60,11 +60,21 @@ public class TypedishController {
 	@RequestMapping(value = "/menus/{id}/typedishes", method = RequestMethod.GET)
 	public String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
 		try {
-			List<Typedish> typedishes = MenuIdentityMap.getInstance().getMenu(id, language);
-			if (typedishes == null) {
+			List<Typedish> typedishes = null;
+			Boolean needToReload = MenuIdentityMap.getInstance().needToReload(id, language);
+			if(null == needToReload || Boolean.FALSE.equals(needToReload)) {
+				typedishes = MenuIdentityMap.getInstance().getMenu(id, language);
+				if (typedishes == null) {
+					typedishes = (List<Typedish>) typedishService.listEntities(id, language);
+					MenuIdentityMap.getInstance().putMenu(id, language, typedishes);
+				}				
+			}
+			else {
 				typedishes = (List<Typedish>) typedishService.listEntities(id, language);
 				MenuIdentityMap.getInstance().putMenu(id, language, typedishes);
 			}
+			
+			
 			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
 			return objectWriter.writeValueAsString(typedishes);
 		} catch (Exception e) {
