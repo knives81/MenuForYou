@@ -19,12 +19,7 @@ public class Utils {
 			throw new NoPermissionException("User " + usernameLogged + " not authorized");
 		}
 	}
-
-	public static void checkPermission(String usernameOwner) {
-		String usernameLogged = Utils.getUsernameLogged();
-		checkPermission(usernameOwner, usernameLogged);
-	}
-
+	
 	public static void checkPermission(Menu menu) {
 		String usernameLogged = Utils.getUsernameLogged();
 		checkPermission(menu.getUser().getUsername(), usernameLogged);

@@ -23,10 +23,9 @@ public class MenuIdentityMap {
 
 	public void flagToBeUpdated(Long idMenu) {
 		for (EnumLanguage language : EnumLanguage.values()) {
-			KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);
-			if (menuMap.containsKey(key)) {
-				menuToBeUpdated.put(key, true);
-			}
+			KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);			
+			menuToBeUpdated.put(key, true);
+			
 		}
 	}
 
@@ -38,12 +37,7 @@ public class MenuIdentityMap {
 
 	public Boolean needToReload(Long idMenu, EnumLanguage language) {
 		KeyMenuInMemory key = new KeyMenuInMemory(idMenu, language);
-		if (null == menuToBeUpdated.get(key)) {
-			return false;
-		}
-		else {
-			return menuToBeUpdated.get(key);
-		}
+		return menuToBeUpdated.get(key);		
 	}
 
 	public void putMenu(Long idMenu, EnumLanguage language, List<Typedish> typedishes) {
