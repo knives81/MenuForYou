@@ -1,4 +1,4 @@
-package com.rest.menuforyou.web;
+package com.rest.menuforyou.databuilder;
 
 public interface TestConst {
 

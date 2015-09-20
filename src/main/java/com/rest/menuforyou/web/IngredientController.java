@@ -40,7 +40,8 @@ public class IngredientController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public List<Ingredient> updateDishes(@RequestBody List<Ingredient> entities, @RequestParam("language") EnumLanguage language) {
 		try {
-			return (List<Ingredient>) ingredientService.updateEntities(entities, language);
+			List<Ingredient> ingredients = (List<Ingredient>) ingredientService.updateEntities(entities, language);
+			return ingredients;
 		} catch (Exception e) {
 			throw new SaveException("Exception Ingredient update", e);
 		}

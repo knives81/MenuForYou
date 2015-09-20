@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
 import com.rest.menuforyou.databuilder.FeedbackBuilder;
+import com.rest.menuforyou.databuilder.TestConst;
 import com.rest.menuforyou.domain.Feedback;
 
 @RunWith(SpringJUnit4ClassRunner.class)

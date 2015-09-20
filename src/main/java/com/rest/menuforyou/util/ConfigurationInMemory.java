@@ -1,6 +1,7 @@
 package com.rest.menuforyou.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ public class ConfigurationInMemory implements Serializable {
 	}
 
 	public ConfigurationInMemory(List<Parameter> parametersDb) {
-
 		for (Parameter parameterDb : parametersDb) {
 			parametersInMemory.put(parameterDb.getName(), parameterDb.getValue());
 		}
@@ -38,8 +38,16 @@ public class ConfigurationInMemory implements Serializable {
 		return merged;
 	}
 
-	public HashMap<String, String> getParametersInMemory() {
-		return parametersInMemory;
+	public List<Parameter> getParameters() {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		for (Map.Entry<String, String> entry : parametersInMemory.entrySet()) {
+			Parameter parameter = new Parameter();
+			parameter.setName(entry.getKey());
+			parameter.setValue(entry.getValue());
+			parameters.add(parameter);
+		}
+
+		return parameters;
 	}
 
 }

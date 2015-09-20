@@ -31,6 +31,9 @@ public abstract class CommonService {
 	@Autowired
 	private MenuRepository menuRepo;
 
+	@Autowired
+	private MenuCache menuCache;
+
 	EntityWithLanguageRepo<? extends EntityWithLanguage> entityRepo;
 	LanguageRepo<? extends Language<?>> languageRepo;
 
@@ -62,6 +65,7 @@ public abstract class CommonService {
 			createNewEntity(idMenu, entityToCreate, enumLanguage);
 			entitiesWithLanguage.add(entityToCreate);
 		}
+		menuCache.invalidate(idMenu, enumLanguage);
 		return entitiesWithLanguage;
 	}
 
@@ -88,6 +92,7 @@ public abstract class CommonService {
 			EntityWithLanguage entityUpdated = updateExistingEntity(entityInput, enumLanguage);
 			entitiesWithLanguage.add(entityUpdated);
 		}
+		menuCache.invalidate(entitiesWithLanguage.get(0).getMenu().getId(), enumLanguage);
 		return entitiesWithLanguage;
 	}
 
@@ -162,10 +167,6 @@ public abstract class CommonService {
 
 		initialize();
 		Sort sort = new Sort(Direction.ASC, "sequenceNumber");
-		// List<? extends EntityWithLanguage> entities = (List<? extends
-		// EntityWithLanguage>) entityRepo.findByMenuId(id, sort);
-		// List<? extends EntityWithLanguage> commonEntities = (List<? extends
-		// EntityWithLanguage>) entityRepo.findByMenuId(ROOT_MENU_ID, sort);
 		List<Long> ids = new ArrayList<Long>();
 		ids.add(id);
 		ids.add(ROOT_MENU_ID);
@@ -193,6 +194,7 @@ public abstract class CommonService {
 		EntityWithLanguage entityDb = entityRepo.findOne(Long.valueOf(id));
 		Utils.checkPermission(entityDb.getMenu());
 		entityRepo.delete(Long.valueOf(id));
+		menuCache.invalidate(entityDb.getMenu().getId());
 		return entityDb.getMenu().getId();
 	}
 

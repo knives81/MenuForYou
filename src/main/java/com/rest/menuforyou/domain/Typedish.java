@@ -44,4 +44,13 @@ public class Typedish extends EntityWithLanguage implements Serializable {
 	public void setDishes(Set<Dish> dishes) {
 		this.dishes = dishes;
 	}
+
+	public void mapCustomFieldsSubEntities(EnumLanguage language) {
+		for (Dish dish : this.getDishes()) {
+			dish.mapCustomFields(language);
+			for (Ingredient ingredient : dish.getIngredients()) {
+				ingredient.mapCustomFields(language);
+			}
+		}
+	}
 }

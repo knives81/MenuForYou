@@ -18,6 +18,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.TestConst;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MenuForYouApplication.class)

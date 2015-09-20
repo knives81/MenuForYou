@@ -1,17 +1,18 @@
 package com.rest.menuforyou.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.rest.menuforyou.domain.Dish;
 import com.rest.menuforyou.domain.EntityWithLanguage;
 import com.rest.menuforyou.domain.EnumLanguage;
-import com.rest.menuforyou.domain.Ingredient;
 import com.rest.menuforyou.domain.Language;
 import com.rest.menuforyou.domain.Typedish;
 import com.rest.menuforyou.domain.TypedishLanguage;
 import com.rest.menuforyou.repository.TypedishLanguageRepository;
 import com.rest.menuforyou.repository.TypedishRepository;
+import com.rest.menuforyou.util.KeyMenuInMemory;
 
 @Service
 public class TypedishService extends CommonService {
@@ -21,6 +22,9 @@ public class TypedishService extends CommonService {
 
 	@Autowired
 	private TypedishLanguageRepository typedishLanguageRepository;
+
+	@Autowired
+	private MenuCache menuCache;
 
 	@Override
 	void initialize() {
@@ -54,14 +58,13 @@ public class TypedishService extends CommonService {
 
 	@Override
 	void mapCustomFieldsSubEntities(EntityWithLanguage entity, EnumLanguage language) {
-		Typedish typedish = (Typedish) entity;
-		for (Dish dish : typedish.getDishes()) {
-			dish.mapCustomFields(language);
-			for (Ingredient ingredient : dish.getIngredients()) {
-				ingredient.mapCustomFields(language);
-			}
-		}
+		entity.mapCustomFields(language);
 
 	}
 
+	@Override
+	public List<? extends EntityWithLanguage> listEntities(long id, EnumLanguage language) {
+		KeyMenuInMemory keyMenuInMemory = new KeyMenuInMemory(id, language);
+		return menuCache.get(keyMenuInMemory);
+	}
 }

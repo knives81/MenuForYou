@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "TB_PARAMETER")
 public class Parameter implements Serializable {
@@ -26,6 +28,7 @@ public class Parameter implements Serializable {
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonIgnore
 	public Long getId() {
 		return id;
 	}
@@ -61,6 +64,7 @@ public class Parameter implements Serializable {
 
 	@OneToOne
 	@JoinColumn(name = "PARAMETER_MENU_ID")
+	@JsonIgnore
 	public Menu getMenu() {
 		return menu;
 	}
@@ -74,6 +78,7 @@ public class Parameter implements Serializable {
 	@Column(name = "LastTouched", columnDefinition =
 			"TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonIgnore
 	public Date getLastTouched() {
 		return lastTouched;
 	}

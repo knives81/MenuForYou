@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.TestConst;
 import com.rest.menuforyou.databuilder.TypedishBuilder;
 import com.rest.menuforyou.domain.Typedish;
 

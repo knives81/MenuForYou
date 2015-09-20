@@ -1,6 +1,9 @@
 package com.rest.menuforyou.web;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -39,6 +42,10 @@ public class InitControllerTest extends BaseTest {
 				.contentType(contentType)
 				.content(userJson))
 				.andExpect(status().isCreated());
+
+		mockMvc.perform(get("/menus/" + 1001 + "/parameters"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(4)));
 
 	}
 }

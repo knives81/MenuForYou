@@ -1,6 +1,6 @@
 package com.rest.menuforyou.web;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,9 +45,9 @@ public class ParameterController {
 	}
 
 	@RequestMapping(value = "/menus/{id}/parameters", method = RequestMethod.GET)
-	public HashMap<String, String> getParameters(@PathVariable long id) {
+	public List<Parameter> getParameters(@PathVariable long id) {
 		try {
-			return parameterService.getConfigurationInMemory(id).getParametersInMemory();
+			return parameterService.getConfigurationInMemory(id).getParameters();
 		} catch (Exception e) {
 			throw new SaveException("Exception Parameter get", e);
 		}

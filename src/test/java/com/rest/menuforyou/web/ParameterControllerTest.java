@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
 import com.rest.menuforyou.databuilder.ParameterBuilder;
+import com.rest.menuforyou.databuilder.TestConst;
 import com.rest.menuforyou.domain.Parameter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,7 +58,8 @@ public class ParameterControllerTest extends BaseTest {
 
 	@Test
 	public void test3ForceReload() throws Exception {
-		mockMvc.perform(get("/menus/" + TestConst.MENU_ID + "/parameters/forcereload"))
+		mockMvc.perform(get("/menus/" + TestConst.MENU_ID + "/parameters/forcereload")
+				.with(user(TestConst.USERNAME).roles(TestConst.ROLE)))
 				.andExpect(status().isOk());
 
 	}
