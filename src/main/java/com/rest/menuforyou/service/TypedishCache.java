@@ -13,18 +13,18 @@ import com.rest.menuforyou.domain.Typedish;
 import com.rest.menuforyou.util.KeyMenuInMemory;
 
 @Component
-public class MenuCache {
+public class TypedishCache {
 
-	final MenuCacheLoader menuCacheLoader;
+	final TypedishCacheLoader typedishCacheLoader;
 
 	LoadingCache<KeyMenuInMemory, List<Typedish>> cache = null;
 
 	@Autowired
-	public MenuCache(MenuCacheLoader menuCacheLoader) {
-		this.menuCacheLoader = menuCacheLoader;
+	public TypedishCache(TypedishCacheLoader typedishCacheLoader) {
+		this.typedishCacheLoader = typedishCacheLoader;
 		cache = CacheBuilder.newBuilder()
 				.maximumSize(10)
-				.build(menuCacheLoader);
+				.build(typedishCacheLoader);
 	}
 
 	public void invalidate(Long idMenu) {

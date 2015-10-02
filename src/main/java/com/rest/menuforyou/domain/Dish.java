@@ -118,4 +118,11 @@ public class Dish extends EntityWithLanguage implements Serializable {
 				+ ",imageUrl:" + imageUrl + "]";
 	}
 
+	public void mapCustomFieldsSubEntities(EnumLanguage language) {
+		this.getTypedish().mapCustomFields(language);
+		for (Ingredient ingredient : this.getIngredients()) {
+			ingredient.mapCustomFields(language);
+		}
+	}
+
 }

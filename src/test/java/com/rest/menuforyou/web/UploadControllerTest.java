@@ -50,7 +50,7 @@ public class UploadControllerTest extends BaseTest {
 		Resource picture = new ClassPathResource("/img/foto.JPG");
 		MockMultipartFile multipartFile = new MockMultipartFile("file", picture.getInputStream());
 
-		mockMvc.perform(fileUpload("/uploadDishImage?id=1").
+		mockMvc.perform(fileUpload("/uploadRestaurantImage?id=1").
 				file(multipartFile)).
 				andExpect(status().isOk());
 	}

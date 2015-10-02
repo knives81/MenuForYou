@@ -32,7 +32,7 @@ public abstract class CommonService {
 	private MenuRepository menuRepo;
 
 	@Autowired
-	private MenuCache menuCache;
+	private TypedishCache menuCache;
 
 	EntityWithLanguageRepo<? extends EntityWithLanguage> entityRepo;
 	LanguageRepo<? extends Language<?>> languageRepo;

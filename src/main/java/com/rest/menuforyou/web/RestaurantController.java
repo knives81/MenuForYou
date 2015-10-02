@@ -28,9 +28,19 @@ public class RestaurantController {
 
 	@RequestMapping(value = "/restaurants", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurant createRestaurant(@RequestBody Restaurant restaurant) throws BindException {
+	public Restaurant createRestaurantByUser(@RequestBody Restaurant restaurant) throws BindException {
 		try {
 			return restaurantService.createRestaurant(restaurant);
+		} catch (Exception e) {
+			throw new SaveException("Exception Restaurant save", e);
+		}
+	}
+
+	@RequestMapping(value = "/menus/{id}/restaurants", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
+	public Restaurant createRestaurant(@PathVariable long id, @RequestBody Restaurant restaurant) throws BindException {
+		try {
+			return restaurantService.createRestaurant(id, restaurant);
 		} catch (Exception e) {
 			throw new SaveException("Exception Restaurant save", e);
 		}

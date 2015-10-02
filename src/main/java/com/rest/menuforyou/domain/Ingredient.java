@@ -45,4 +45,8 @@ public class Ingredient extends EntityWithLanguage implements Serializable {
 	public void setDishes(Set<Dish> dishes) {
 		this.dishes = dishes;
 	}
+
+	public void mapCustomFieldsSubEntities(EnumLanguage language) {
+
+	}
 }

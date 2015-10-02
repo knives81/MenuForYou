@@ -20,15 +20,15 @@ curl -i -X GET http://localhost:8082/menuforyou/dishes/4000?language=EN
 curl -i -X GET http://localhost:8082/menuforyou/menus/1000/dishes?language=IT
 curl -i -X GET http://localhost:8082/menuforyou/menus/1000/dishes?language=EN
 curl -i -X POST -u maurizio01:password http://localhost:8082/menuforyou/menus/1000/dishes?language=EN -d '[{"description":"Lasagna con pomodoro e mozzarella","name":"Lasagna","price":10.5,"typedish":{"id":3000},"ingredients":[{"id":"1"}]}]' -H "Content-Type:application/json"
-curl -i -X PUT  -u maurizio01:password http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"4000","price":11.5,"typedish":{"id":1},"ingredients":[{"id":"2"},{"id":"1"}]}]' -H "Content-Type:application/json"
-curl -i -X PUT  -u maurizio01:password http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"1","name":"Gnocco Modified","description":"Gnocco Language Modified","typedish":{"id":2},"ingredients":[{"id":"3"},{"id":"4"}]}]' -H "Content-Type:application/json"
+curl -i -X PUT  -u maurizio01:password http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"4000","price":11.5,"typedish":{"id":3000},"ingredients":[{"id":"2"},{"id":"1"}]}]' -H "Content-Type:application/json"
+curl -i -X PUT  -u maurizio01:password http://localhost:8082/menuforyou/dishes?language=EN -d '[{"id":"1","name":"Gnocco Modified","description":"Gnocco Language Modified","typedish":{"id":3001},"ingredients":[{"id":"3"},{"id":"4"}]}]' -H "Content-Type:application/json"
 
 curl -i -X GET http://localhost:8082/menuforyou/restaurants
 curl -i -X POST -u maurizio01:password http://localhost:8082/menuforyou/restaurants -d '{"name":"Ristorante03 menu 01","address":"via del bosco"}' -H "Content-Type:application/json" -H "Content-Type:application/json"
 curl -i -X PUT  -u maurizio01:password http://localhost:8082/menuforyou/restaurants -d '{"id":"1","name":"Ristorante03 menu 01","address":"via del bosco"}' -H "Content-Type:application/json"
 
 curl -i -X GET -u maurizio01:password http://localhost:8082/menuforyou/menus/1000/feedbacks?language=IT
-curl -i -X POST http://localhost:8082/menuforyou/dishes/1/feedbacks -d '{"rating":5,"message":"troppo piccante"}' -H "Content-Type:application/json"
+curl -i -X POST http://localhost:8082/menuforyou/dishes/4000/feedbacks -d '{"rating":5,"message":"troppo piccante"}' -H "Content-Type:application/json"
 
 curl -i -X POST http://localhost:8082/menuforyou/users -d '{"username":"maurizio03","password":"password","enabled":"true"}' -H "Content-Type:application/json"
 

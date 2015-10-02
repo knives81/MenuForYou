@@ -112,9 +112,6 @@ public abstract class EntityWithLanguage implements Serializable, EntityLanguage
 				return;
 			}
 		}
-		// String message = "language not found";
-		// System.err.println(message);
-		// throw new GenericException(Error.UNKNOWN, message);
 	}
 
 	private void mapOrder() {

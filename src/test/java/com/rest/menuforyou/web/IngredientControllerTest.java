@@ -91,7 +91,7 @@ public class IngredientControllerTest extends BaseTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(ingredientId))
 				.andExpect(jsonPath("$[0].description").value(ingredientDesc))
-				.andExpect(jsonPath("$[0].order").value(13));
+				.andExpect(jsonPath("$[0].order").value(5011));
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class IngredientControllerTest extends BaseTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(ingredientId))
 				.andExpect(jsonPath("$[0].description").value(ingredientDesc))
-				.andExpect(jsonPath("$[0].order").value(12));
+				.andExpect(jsonPath("$[0].order").value(5009));
 	}
 
 }

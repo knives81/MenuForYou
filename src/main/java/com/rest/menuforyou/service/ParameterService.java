@@ -39,6 +39,13 @@ public class ParameterService {
 
 	}
 
+	public void initParameters(Menu menu, List<Parameter> parameters) {
+		for (Parameter parameterToCreate : parameters) {
+			parameterToCreate.setMenu(menu);
+			parameterRepo.save(parameterToCreate);
+		}
+	}
+
 	@Transactional(readOnly = true)
 	public void forceReload(long idMenu) {
 		Menu menu = menuRepo.findOne(Long.valueOf(idMenu));

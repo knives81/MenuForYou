@@ -89,7 +89,7 @@ public class TypedishControllerTest extends BaseTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(typedishId))
 				.andExpect(jsonPath("$[0].description").value(typedishDesc))
-				.andExpect(jsonPath("$[0].order").value(13));
+				.andExpect(jsonPath("$[0].order").value(5011));
 
 	}
 
@@ -114,7 +114,7 @@ public class TypedishControllerTest extends BaseTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(typedishId))
 				.andExpect(jsonPath("$[0].description").value(typedishDesc))
-				.andExpect(jsonPath("$[0].order").value(4));
+				.andExpect(jsonPath("$[0].order").value(5001));
 
 	}
 

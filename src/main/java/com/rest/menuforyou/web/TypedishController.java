@@ -58,7 +58,7 @@ public class TypedishController {
 	public String listTypedish(@PathVariable long id, @RequestParam("language") EnumLanguage language) {
 		try {
 			List<Typedish> typedishes = (List<Typedish>) typedishService.listEntities(id, language);
-			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromTypedish.class);
+			ObjectWriter objectWriter = objectMapper.writerWithView(Views.ViewFromDish.class);
 			return objectWriter.writeValueAsString(typedishes);
 		} catch (Exception e) {
 			throw new ResourceNotFoundException("Exception Typedish load", e);

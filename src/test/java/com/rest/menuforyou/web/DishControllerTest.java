@@ -70,7 +70,7 @@ public class DishControllerTest extends BaseTest {
 				andExpect(jsonPath("$[0].ingredients", hasSize(2))).
 				andExpect(jsonPath("$[1].id").value(4001)).
 				andExpect(jsonPath("$[1].description").value("Panna Cotta alle fragole")).
-				andExpect(jsonPath("$[1].ingredients", hasSize(0))).
+				andExpect(jsonPath("$[1].ingredients", hasSize(1))).
 				andExpect(jsonPath("$[2].id").value(4002)).
 				andExpect(jsonPath("$[2].description").value("Bistecca")).
 				andExpect(jsonPath("$[2].ingredients", hasSize(1)));
@@ -80,7 +80,8 @@ public class DishControllerTest extends BaseTest {
 	@Test
 	public void test3CreateDishes() throws Exception {
 
-		int dishId = 4003;
+		int dishId = 4004;
+		int order = 5011;
 		String dishDesc = "Lasagna con pomodoro e mozzarella";
 
 		List<Dish> dishes = Arrays.asList(
@@ -106,7 +107,7 @@ public class DishControllerTest extends BaseTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$[0].id").value(dishId))
 				.andExpect(jsonPath("$[0].description").value(dishDesc))
-				.andExpect(jsonPath("$[0].order").value(13));
+				.andExpect(jsonPath("$[0].order").value(order));
 
 	}
 

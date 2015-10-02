@@ -15,6 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.rest.menuforyou.MenuForYouApplication;
+import com.rest.menuforyou.databuilder.TestConst;
 import com.rest.menuforyou.databuilder.UserBuilder;
 import com.rest.menuforyou.domain.User;
 
@@ -31,6 +32,7 @@ public class InitControllerTest extends BaseTest {
 	@Test
 	public void testCreateUser() throws Exception {
 
+		int menuJustCreatedId = 1001;
 		User user = UserBuilder.user()
 				.withUsername("maurizio03")
 				.withPassword("password")
@@ -43,9 +45,17 @@ public class InitControllerTest extends BaseTest {
 				.content(userJson))
 				.andExpect(status().isCreated());
 
-		mockMvc.perform(get("/menus/" + 1001 + "/parameters"))
+		mockMvc.perform(get("/menus/" + menuJustCreatedId + "/parameters"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(4)));
+
+		mockMvc.perform(get("/menus/" + menuJustCreatedId + "/typedishes" + TestConst.IT))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(2)))
+				.andExpect(jsonPath("$[0].description").value("Insalata"))
+				.andExpect(jsonPath("$[0].order").value(5011))
+				.andExpect(jsonPath("$[1].description").value("Dolci"))
+				.andExpect(jsonPath("$[1].order").value(5012));
 
 	}
 }

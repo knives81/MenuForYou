@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 public class StatsService {
 
 	@Autowired
-	private MenuCache menuCache;
+	private TypedishCache typedishCache;
 
 	@Autowired
 	private ParameterCache parameterCache;
 
+	@Autowired
+	private RestaurantCache restaurantCache;
+
 	public String getStats() {
-		return "MenuCache:" + menuCache.size() + ",ParameterCache:" + parameterCache.size();
+		return "{\"typedishCache\":" + typedishCache.size() +
+				",\"parameterCache\":" + parameterCache.size() +
+				",\"restaurantCache\":" + restaurantCache.size() + "}";
 	}
 
 }

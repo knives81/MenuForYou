@@ -15,4 +15,6 @@ public interface EntityLanguageble {
 
 	public abstract void mapCustomFields(EnumLanguage language);
 
+	public abstract void mapCustomFieldsSubEntities(EnumLanguage language);
+
 }

@@ -30,6 +30,9 @@ public class RestaurantService {
 	@Autowired
 	private MenuRepository menuRepo;
 
+	@Autowired
+	private RestaurantCache restaurantCache;
+
 	@Transactional(readOnly = false)
 	public Restaurant createRestaurant(Restaurant restaurant) {
 
@@ -39,6 +42,15 @@ public class RestaurantService {
 		restaurant.setLastTouched(new Date());
 		restaurant = restaurantRepo.save(restaurant);
 
+		return restaurant;
+
+	}
+
+	public Restaurant createRestaurant(long idMenu, Restaurant restaurant) {
+		Menu menu = menuRepo.findOne(idMenu);
+		restaurant.setMenu(menu);
+		restaurant.setLastTouched(new Date());
+		restaurant = restaurantRepo.save(restaurant);
 		return restaurant;
 
 	}
@@ -60,6 +72,7 @@ public class RestaurantService {
 		}
 		restaurantDb.setLastTouched(new Date());
 		restaurantRepo.save(restaurantDb);
+		restaurantCache.invalidate(restaurantDb.getId());
 		return restaurantDb;
 	}
 
@@ -71,8 +84,8 @@ public class RestaurantService {
 
 	@Transactional(readOnly = true)
 	public Restaurant getRestaurant(long idRestaurant) {
-		Restaurant restaurant = restaurantRepo.findOne(Long.valueOf(idRestaurant));
-		return restaurant;
+		return restaurantCache.get(idRestaurant);
+
 	}
 
 }
